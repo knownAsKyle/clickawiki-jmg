@@ -1,2 +1,0 @@
-# clickawiki
-Clickability Wiki

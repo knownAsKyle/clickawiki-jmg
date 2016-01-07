@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickawiki - Clickability Wiki</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/user.css">
+    <link rel="stylesheet" href="assets/bootstrap/fonts/font-awesome.min.css">
+</head>
+
+<body ng-app="clickawiki">
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Clickawiki</a>
+                <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"></button>
+            </div>
+            <div class="collapse navbar-collapse" id="navcol-1"></div>
+        </div>
+    </nav>
+    <div class="container" ng-controller="mainController as vm" ng-cloak>
+        <div class="row">
+            <div class="col-md-3 left-col">
+				<h4>Classes:</h4>
+				<ul class="list-group classes">
+					<li ng-repeat="item in vm.leftSideItems track by $index" ng-class="{active: vm.selectedItem == item}" class="class-selector list-group-item" ng-click="vm.selectClass(item)">
+						<span class="class-name">{{item.name}}</span>
+						<!--<span class="pull-right glyphicon glyphicon-remove-circle" ng-click="vm.removeClass(item)" aria-hidden="true"></span>-->
+					</li>
+				</ul>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Add new class</h3>
+					</div>
+					<div class="panel-body">
+						<div class="input-group input-group-sm">
+							<input type="text" class="form-control" ng-model="vm.leftSideItem" placeholder="Class name..." ng-keypress="vm.checkForEnter($event)">
+							<span class="input-group-btn">
+								<button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.leftSideItem)"><span class="glyphicon glyphicon-plus-sign"></span></button>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+            <div class="col-md-9 right-col">
+				<h4>Select a class on the left to view/edit its properties.</h4>
+				<div class="panel panel-primary" ng-show="vm.selectedItem.name">
+					<div class="panel-heading">
+						<div class="panel-title clearfix">
+							<div class="row">
+								<div class="col-md-4">
+									<span class="class-name-header">{{vm.selectedItem.name}}</span>
+								</div>
+								<div class="col-md-8">
+									<div class="btn-group pull-right" role="group" aria-label="Class operations">
+										<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+										<button type="button" class="btn btn-info">Edit class <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+										<button type="button" class="btn btn-danger" ng-click="vm.removeClass(vm.selectedItem)">Remove class <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel-body">
+						<div class="input-group method-search">
+							<input ng-show="vm.selectedItem.name" ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
+							<span class="input-group-btn">
+								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+							</span>
+						</div>
+						<div class="input-group new-method-wrapper" ng-show="vm.displayAddNewMethodFlag">
+							<input type="text" ng-model="vm.newMethodName" class="new-method-name" placeholder="Method name..."/><br>
+							<textarea ng-model="vm.newMethodBody" class="new-method-body" placeholder="Method body..."></textarea>
+							<button class="btn btn-success add-new-method" ng-click="vm.addNewMethod(vm.newMethodName, vm.newMethodBody)">Submit</button>
+						</div>
+						<div class="methods" ng-repeat="method in vm.selectedItem.methods| filter: {name: vm.methodSearchText} track by $index">
+							<div class="well method">
+								<h4 class="method-name">
+									{{method.name}}
+									<small>
+										<div class="btn-group pull-right" role="group" aria-label="Method operations">
+											<button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.editMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+											<button type="button" class="btn btn-sm btn-default" title="Remove method" ng-click="vm.removeMethod(method)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+										</div>
+									</small>
+								</h4>
+								<hr>
+								<div class="method-body">
+									<p>{{method.body}}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+	<script>
+		(function() {
+			angular.module("clickawiki", []);
+		})();
+		(function() {
+			angular.module("clickawiki").constant("constants", {
+				firebaseURL: "https://quicktest1.firebaseio.com/wiki"
+			});
+		})();
+		(function() {
+			angular.module("clickawiki").factory("firebaseFactory", firebaseFactory);
+			firebaseFactory.$inject = ["constants"];
+
+			function firebaseFactory(constants) {
+				var ref = new Firebase(constants.firebaseURL);
+
+				return {
+					getRef: getRef,
+					update: update
+				};
+
+				function getRef() {
+					return ref;
+				}
+
+				function update(data) {
+					ref.set(data, function(err) {
+						return err || "complete";
+					});
+				}
+			}
+		})();
+
+		//Controllers
+		(function() {
+			angular.module("clickawiki").controller("mainController", mainController);
+			mainController.$inject = ["$timeout", "firebaseFactory"];
+
+			function mainController($timeout, firebaseFactory) {
+				var vm = this;
+				vm.leftSideItems = [];
+				ref = firebaseFactory.getRef();
+				ref.on("value", handleDataUpdate);
+				vm.selectedItem = {};
+				vm.displayAddNewMethodFlag = false;
+
+				function handleDataUpdate(snap) {
+					$timeout(function() {
+						console.log(snap.val())
+						vm.leftSideItems = snap.val() || [];
+					});
+				}
+
+				vm.addNewClass = function(item) {
+					if (item) {
+						vm.leftSideItems.push(makeNewLeftSideItem(item));
+						firebaseFactory.update(vm.leftSideItems);
+						vm.leftSideItem = "";
+					}
+				};
+
+				vm.removeClass = function(item) {
+					if (item && confirmDelete()) {
+						var index = vm.leftSideItems.indexOf(item);
+
+						if (item.name === vm.selectedItem.name) {
+							vm.selectedItem = {};
+						}
+
+						vm.leftSideItems.splice(index, 1);
+						firebaseFactory.update(vm.leftSideItems);
+					}
+				};
+
+				vm.selectClass = function(item) {
+					vm.selectedItem = item;
+				};
+
+				vm.displayAddNewMethod = function() {
+					vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
+				};
+
+				vm.addNewMethod = function(name, body) {
+					vm.selectedItem.methods = vm.selectedItem.methods || [];
+					vm.selectedItem.methods.push(makeNewMethod(name, body));
+					vm.newMethodName = "";
+					vm.newMethodBody = "";
+					vm.displayAddNewMethodFlag = false;
+					firebaseFactory.update(vm.leftSideItems);
+				};
+				vm.removeMethod = function(item) {
+					if (item && confirmDelete()) {
+						var index = vm.selectedItem.methods.indexOf(item);
+						vm.selectedItem.methods.splice(index, 1);
+						firebaseFactory.update(vm.leftSideItems);
+					}
+				};
+
+				vm.checkForEnter = function(evt) {
+					if (evt && evt.keyCode === 13) {
+						vm.addNewLeftSideItem(vm.leftSideItem);
+					}
+				};
+
+				function makeNewLeftSideItem(name) {
+					return {
+						name: name
+					};
+				}
+
+				function makeNewMethod(name, body) {
+					return {
+						name: name,
+						body: body
+					};
+				}
+
+				function confirmDelete(){
+					return confirm("Are you sure you want to delete this?");
+				}
+			}
+		})();
+	</script>
+</body>
+
+</html>
