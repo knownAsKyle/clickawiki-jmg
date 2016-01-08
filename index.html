@@ -2,26 +2,26 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clickawiki - Clickability Wiki</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/user.css">
-    <link rel="stylesheet" href="assets/bootstrap/fonts/font-awesome.min.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Clickawiki - Clickability Wiki</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link rel="stylesheet" href="assets/css/user.css">
+	<link rel="stylesheet" href="assets/bootstrap/fonts/font-awesome.min.css">
 </head>
 
 <body ng-app="clickawiki">
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Clickawiki</a>
-                <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"></button>
-            </div>
-            <div class="collapse navbar-collapse" id="navcol-1"></div>
-        </div>
-    </nav>
-    <div class="container" ng-controller="mainController as vm" ng-cloak>
-        <div class="row">
-            <div class="col-md-3 left-col">
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Clickawiki</a>
+				<button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"></button>
+			</div>
+			<div class="collapse navbar-collapse" id="navcol-1"></div>
+		</div>
+	</nav>
+	<div class="container" ng-controller="mainController as vm" ng-cloak>
+		<div class="row">
+			<div class="col-md-3 left-col">
 				<h4>Classes:</h4>
 				<ul class="list-group classes">
 					<li ng-repeat="item in vm.leftSideItems track by $index" ng-class="{active: vm.selectedItem == item}" class="class-selector list-group-item" ng-click="vm.selectClass(item)">
@@ -43,7 +43,7 @@
 					</div>
 				</div>
 			</div>
-            <div class="col-md-9 right-col">
+			<div class="col-md-9 right-col">
 				<h4>Select a class on the left to view/edit its properties.</h4>
 				<div class="panel panel-primary" ng-show="vm.selectedItem.name">
 					<div class="panel-heading">
@@ -93,136 +93,14 @@
 						</div>
 					</div>
 				</div>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
-	<script>
-		(function() {
-			angular.module("clickawiki", []);
-		})();
-		(function() {
-			angular.module("clickawiki").constant("constants", {
-				firebaseURL: "https://quicktest1.firebaseio.com/wiki"
-			});
-		})();
-		(function() {
-			angular.module("clickawiki").factory("firebaseFactory", firebaseFactory);
-			firebaseFactory.$inject = ["constants"];
-
-			function firebaseFactory(constants) {
-				var ref = new Firebase(constants.firebaseURL);
-
-				return {
-					getRef: getRef,
-					update: update
-				};
-
-				function getRef() {
-					return ref;
-				}
-
-				function update(data) {
-					ref.set(data, function(err) {
-						return err || "complete";
-					});
-				}
-			}
-		})();
-
-		//Controllers
-		(function() {
-			angular.module("clickawiki").controller("mainController", mainController);
-			mainController.$inject = ["$timeout", "firebaseFactory"];
-
-			function mainController($timeout, firebaseFactory) {
-				var vm = this;
-				vm.leftSideItems = [];
-				ref = firebaseFactory.getRef();
-				ref.on("value", handleDataUpdate);
-				vm.selectedItem = {};
-				vm.displayAddNewMethodFlag = false;
-
-				function handleDataUpdate(snap) {
-					$timeout(function() {
-						console.log(snap.val())
-						vm.leftSideItems = snap.val() || [];
-					});
-				}
-
-				vm.addNewClass = function(item) {
-					if (item) {
-						vm.leftSideItems.push(makeNewLeftSideItem(item));
-						firebaseFactory.update(vm.leftSideItems);
-						vm.leftSideItem = "";
-					}
-				};
-
-				vm.removeClass = function(item) {
-					if (item && confirmDelete()) {
-						var index = vm.leftSideItems.indexOf(item);
-
-						if (item.name === vm.selectedItem.name) {
-							vm.selectedItem = {};
-						}
-
-						vm.leftSideItems.splice(index, 1);
-						firebaseFactory.update(vm.leftSideItems);
-					}
-				};
-
-				vm.selectClass = function(item) {
-					vm.selectedItem = item;
-				};
-
-				vm.displayAddNewMethod = function() {
-					vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
-				};
-
-				vm.addNewMethod = function(name, body) {
-					vm.selectedItem.methods = vm.selectedItem.methods || [];
-					vm.selectedItem.methods.push(makeNewMethod(name, body));
-					vm.newMethodName = "";
-					vm.newMethodBody = "";
-					vm.displayAddNewMethodFlag = false;
-					firebaseFactory.update(vm.leftSideItems);
-				};
-				vm.removeMethod = function(item) {
-					if (item && confirmDelete()) {
-						var index = vm.selectedItem.methods.indexOf(item);
-						vm.selectedItem.methods.splice(index, 1);
-						firebaseFactory.update(vm.leftSideItems);
-					}
-				};
-
-				vm.checkForEnter = function(evt) {
-					if (evt && evt.keyCode === 13) {
-						vm.addNewLeftSideItem(vm.leftSideItem);
-					}
-				};
-
-				function makeNewLeftSideItem(name) {
-					return {
-						name: name
-					};
-				}
-
-				function makeNewMethod(name, body) {
-					return {
-						name: name,
-						body: body
-					};
-				}
-
-				function confirmDelete(){
-					return confirm("Are you sure you want to delete this?");
-				}
-			}
-		})();
-	</script>
+	<script src="assets/js/script.js"></script>
 </body>
 
 </html>
