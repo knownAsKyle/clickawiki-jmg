@@ -6,13 +6,12 @@ gulp.task("watch", watch);
 gulp.task('compress', compress);
 
 function watch() {
-    return gulp.watch('app/scripts/modules/*.js', ['compress']);
+    return gulp.watch('app/scripts/*.js', ['compress']);
 }
 
 function compress() {
-    return gulp.src(['scripts/modules/main.js', 'scripts/modules/*.js'])
+    return gulp.src(['app/scripts/main.js', 'app/scripts/*.js'])
         .pipe(concat('script.js'))
-        .pipe(gulp.dest('scripts'))
         .pipe(gulp.dest('dist'))
         .pipe(uglify())
         .pipe(concat('script.min.js'))
