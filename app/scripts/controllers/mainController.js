@@ -1,37 +1,4 @@
 (function() {
-	angular.module("clickawiki", []);
-})();
-(function() {
-	angular.module("clickawiki").constant("constants", {
-		firebaseURL: "https://quicktest1.firebaseio.com/wiki"
-	});
-})();
-(function() {
-	angular.module("clickawiki").factory("firebaseFactory", firebaseFactory);
-	firebaseFactory.$inject = ["constants"];
-
-	function firebaseFactory(constants) {
-		var ref = new Firebase(constants.firebaseURL);
-
-		return {
-			getRef: getRef,
-			update: update
-		};
-
-		function getRef() {
-			return ref;
-		}
-
-		function update(data) {
-			ref.set(data, function(err) {
-				return err || "complete";
-			});
-		}
-	}
-})();
-
-//Controllers
-(function() {
 	angular.module("clickawiki").controller("mainController", mainController);
 	mainController.$inject = ["$timeout", "firebaseFactory"];
 
