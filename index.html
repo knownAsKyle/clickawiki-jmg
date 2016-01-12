@@ -16,9 +16,8 @@
 			<div class="col-md-3 left-col">
 				<h4>Classes:</h4>
 				<ul class="list-group classes">
-					<li ng-repeat="item in vm.leftSideItems track by $index" ng-class="{active: vm.selectedItem == item}" class="class-selector list-group-item" ng-click="vm.selectClass(item)">
-						<span class="class-name">{{item.name}}</span>
-						<!--<span class="pull-right glyphicon glyphicon-remove-circle" ng-click="vm.removeClass(item)" aria-hidden="true"></span>-->
+					<li ng-repeat="(key, val) in vm.allClasses" ng-class="{active: vm.selectedClass.key === key}" class="class-selector list-group-item" ng-click="vm.selectClass(key,val)">
+						<span class="class-name">{{val.name}}</span>
 					</li>
 				</ul>
 				<div class="panel panel-default">
@@ -27,9 +26,9 @@
 					</div>
 					<div class="panel-body">
 						<div class="input-group input-group-sm">
-							<input type="text" class="form-control" ng-model="vm.leftSideItem" placeholder="Class name..." ng-keypress="vm.checkForEnter($event)">
+							<input type="text" class="form-control" ng-model="vm.newClassName" placeholder="Class name..." ng-keypress="vm.checkForEnter($event)">
 							<span class="input-group-btn">
-								<button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.leftSideItem)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+								<button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.newClassName)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
 							</span>
 						</div>
 					</div>
@@ -37,7 +36,7 @@
 			</div>
 			<div class="col-md-9 right-col">
 				<h4>Select a class on the left to view/edit its properties.</h4>
-				<div class="panel panel-primary" ng-show="!vm.isEmpty(vm.selectedItem)">
+				<div class="panel panel-primary" ng-show="vm.selectedClass">
 					<div class="panel-heading">
 						<div class="panel-title clearfix">
 							<div class="row">
@@ -45,11 +44,11 @@
 									<span class="class-name-header">
 									<small>
 										<div class="btn-group pull-left" role="group" aria-label="Method operations">
-											<h3 ng-dblclick="vm.editClass = true" ng-show="!vm.editClass">{{vm.selectedItem.name}}</h3>
+											<h3 ng-dblclick="vm.editClass = true" ng-show="!vm.editClass">{{vm.selectedClass.val.name}}</h3>
 											<div class="input-group method-search" ng-show="vm.editClass">
-												<input ng-readonly="!vm.editClass" ng-model="vm.selectedItem.name" type="text" class="form-control" placeholder="Class Name..." ng-dblclick="vm.editClass = false" ng-keyup="vm.editClass = !vm.checkForEnter2($event)">
+												<input ng-readonly="!vm.editClass" ng-model="vm.selectedClass.val.name" type="text" class="form-control" placeholder="Class Name..." ng-dblclick="vm.editClass = false" ng-change="vm.updateClass(vm.selectedClass)" ng-keyup="vm.editClass = !vm.checkForEnter2($event)">
 												<span class="input-group-btn">
-													<button type="button" class="btn btn-md btn-danger" title="Remove method" ng-click="vm.removeClass(vm.selectedItem)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+													<button type="button" class="btn btn-md btn-danger" title="Remove method" ng-click="vm.removeClass(vm.selectedClass.key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 												</span>
 											</div>	
 										</div>
@@ -65,7 +64,7 @@
 					</div>
 					<div class="panel-body">
 						<div class="input-group method-search">
-							<input ng-show="vm.selectedItem.name" ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
+							<input ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
 							<span class="input-group-btn">
 								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
 							</span>
@@ -73,21 +72,16 @@
 						<div class="well clearfix" ng-show="vm.displayAddNewMethodFlag">
 							<form class="form-horizontal" role="form">
 								<h3>New method:</h3>
-								<input type="text" ng-model="vm.newMethodName" class="form-control" id="new-method-name" placeholder="Method name"/><br>
+								<input type="text" ng-model="vm.method.name" class="form-control" id="new-method-name" placeholder="Method name"/><br>
 								<div class="form-group">
 									<div class="col-sm-3 ">
-										<select class="form-control" id="new-method-returntype">
+										<select ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'" class="form-control" id="new-method-returntype">
 											<option selected disabled>Return type</option>
-											<option value="Array">Array</option>
-											<option value="ArrayList">ArrayList</option>
-											<option value="Boolean">Boolean</option>
-											<option value="Integer">Integer</option>
-											<option value="Object">Object</option>
-											<option value="String">String</option>
+											<option ng-repeat="type in vm.returnTypes" value="{{type}}">{{type}}</option>
 										</select>
 									</div>
 									<div class="col-sm-9">
-										<input type="text" class="form-control" placeholder="Return description" />
+										<input type="text" ng-model="vm.method.returnDescription" class="form-control" placeholder="Return description" />
 									</div>
 								</div>
 								<div class="form-group form-group-sm">
@@ -99,12 +93,7 @@
 												<div class="col-sm-3 ">
 													<select class="form-control">
 														<option selected disabled>Return type</option>
-														<option value="Array">Array</option>
-														<option value="ArrayList">ArrayList</option>
-														<option value="Boolean">Boolean</option>
-														<option value="Integer">Integer</option>
-														<option value="Object">Object</option>
-														<option value="String">String</option>
+														<option ng-repeat="type in vm.returnTypes" value="{{type}}">{{type}}</option>
 													</select>
 												</div>
 												<div class="col-sm-2">
@@ -121,12 +110,7 @@
 												<div class="col-sm-3 ">
 													<select class="form-control">
 														<option selected disabled>Return type</option>
-														<option value="Array">Array</option>
-														<option value="ArrayList">ArrayList</option>
-														<option value="Boolean">Boolean</option>
-														<option value="Integer">Integer</option>
-														<option value="Object">Object</option>
-														<option value="String">String</option>
+														<option ng-repeat="type in vm.returnTypes" value="{{type}}">{{type}}</option>
 													</select>
 												</div>
 												<div class="col-sm-2">
@@ -151,13 +135,13 @@
 										<textarea ng-model="vm.newMethodBody" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
 									</div>
 								</div>
-								<button type="button" class="btn btn-success add-new-method pull-right" ng-click="vm.addNewMethod(vm.newMethodName, vm.newMethodBody)">Submit</button>
+								<button type="button" class="btn btn-success add-new-method pull-right" ng-click="vm.addNewMethod(vm.method)">Submit</button>
 							</form>
 						</div>
-						<div class="methods" ng-repeat="method in vm.selectedItem.methods| filter: {name: vm.methodSearchText} track by $index">
+						<div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods">
 							<div class="well method">
 								<h4 class="method-name">
-									{{method.name}}
+									{{method.name}} - {{method.returnType}}
 									<small>
 										<div class="btn-group pull-right" role="group" aria-label="Method operations">
 											<button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.editMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
@@ -167,7 +151,7 @@
 								</h4>
 								<hr>
 								<div class="method-body">
-									<p>{{method.body}}</p>
+									<p>{{method.returnDescription}}</p>
 								</div>
 							</div>
 						</div>

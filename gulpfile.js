@@ -5,7 +5,7 @@ var concat = require('gulp-concat');
 gulp.task("watch", watch);
 gulp.task('compress', compress);
 
-var folders = ["modules", "constants", "factories", "controllers", "directives"];
+var folders = ["modules", "constants", "factories", "controllers", "directives", "filters"];
 var watchGroupJS = formatWatchGroup(folders, "app/scripts/", "/*js");
 
 function formatWatchGroup(list, pathConst, extension) {

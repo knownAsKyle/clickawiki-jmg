@@ -4,8 +4,39 @@
 (function() {
 	angular.module("clickawiki").constant("constants", {
 		firebaseURL: "https://quicktest1.firebaseio.com/wiki",
-		navTitle: "Clickawiki"
+		navTitle: "Clickawiki",
+		types: ["ArrayList","Boolean","Integer","Object","String"]
 	});
+})();
+(function() {
+    angular.module("clickawiki").factory("classFactory", classFactory);
+    classFactory.$inject = [];
+
+    function classFactory() {
+        return {
+            makeNewClass: makeNewClass,
+            removeClass: removeClass,
+            updateClass: updateClass
+        };
+
+        function makeNewClass(className) {
+            return {
+                name: className
+            };
+        }
+
+        function removeClass(ref, id) {
+            ref.child(id).remove(function(err) {
+                return err ? console.log(err) : true;
+            });
+        }
+
+        function updateClass(ref, id, val) {
+        	ref.child(id).update(val,function(err){
+        		return err ? console.log(err) : true;
+        	});
+        }
+    }
 })();
 (function() {
 	angular.module("clickawiki").factory("firebaseFactory", firebaseFactory);
@@ -31,107 +62,127 @@
 	}
 })();
 (function() {
-	angular.module("clickawiki").controller("mainController", mainController);
-	mainController.$inject = ["$timeout", "constants", "firebaseFactory"];
+    angular.module("clickawiki").factory("methodFactory", methodFactory);
+    methodFactory.$inject = [];
 
-	function mainController($timeout, constants, firebaseFactory) {
-		var vm = this;
-		vm.navTitle = constants.navTitle;
-		vm.leftSideItems = [];
-		ref = firebaseFactory.getRef();
-		ref.on("value", handleDataUpdate);
-		vm.selectedItem = {};
-		vm.displayAddNewMethodFlag = false;
+    function methodFactory() {
+        return {
 
-		function handleDataUpdate(snap) {
-			$timeout(function() {
-				vm.leftSideItems = snap.val() || [];
-			});
-		}
+        };
+    }
+})();
+(function() {
+    angular.module("clickawiki").controller("mainController", mainController);
+    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory"];
 
-		vm.addNewClass = function(item) {
-			if (item) {
-				vm.leftSideItems.push(makeNewLeftSideItem(item));
-				firebaseFactory.update(vm.leftSideItems);
-				vm.leftSideItem = "";
-			}
-		};
+    function mainController($timeout, constants, firebaseFactory, classFactory) {
+        var vm = this;
+        vm.navTitle = constants.navTitle;
+        vm.returnTypes = constants.types;
+        vm.allClasses = [];
+        var ref = firebaseFactory.getRef();
+        ref.on("value", handleDataUpdate);
+        // vm.displayAddNewMethodFlag = false;
 
-		vm.removeClass = function(item) {
-			if (item && confirmDelete()) {
-				var index = vm.leftSideItems.indexOf(item);
+        function handleDataUpdate(snap) {
+            $timeout(function() {
+                console.log("handleDataUpdate() ", snap.val());
+                vm.allClasses = snap.val() || {};
+            });
+        }
 
-				if (item.name === vm.selectedItem.name) {
-					vm.selectedItem = {};
-				}
+        vm.addNewClass = function(className) {
+            if (className) {
+                ref.push(classFactory.makeNewClass(className));
+                vm.newClassName = "";
+            }
+        };
 
-				vm.leftSideItems.splice(index, 1);
-				firebaseFactory.update(vm.leftSideItems);
-			}
-		};
+        vm.removeClass = function(id) {
+            if (id && confirmDelete()) {
+                classFactory.removeClass(ref, id);
+            }
+        };
 
-		vm.selectClass = function(item) {
-			vm.selectedItem = item;
-			vm.editClass = false;
-		};
+        vm.updateClass = function(classObj) {
+            if (classObj && classObj.val.name.length > 0) {
+                classFactory.updateClass(ref, classObj.key, classObj.val);
+            }
+        };
 
-		vm.displayAddNewMethod = function() {
-			vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
-		};
+        vm.selectClass = function(key, val) {
+            vm.selectedClass = {};
+            vm.selectedClass.key = key;
+            vm.selectedClass.val = val;
+            vm.displayAddNewMethodFlag = false;
+            // vm.editClass = false;
+        };
 
-		vm.addNewMethod = function(name, body) {
-			vm.selectedItem.methods = vm.selectedItem.methods || [];
-			vm.selectedItem.methods.push(makeNewMethod(name, body));
-			vm.newMethodName = "";
-			vm.newMethodBody = "";
-			vm.displayAddNewMethodFlag = false;
-			firebaseFactory.update(vm.leftSideItems,function(){console.log("here")}).then(function(){alert()})
-		};
-		vm.removeMethod = function(item) {
-			if (item && confirmDelete()) {
-				var index = vm.selectedItem.methods.indexOf(item);
-				vm.selectedItem.methods.splice(index, 1);
-				firebaseFactory.update(vm.leftSideItems);
-			}
-		};
+        vm.displayAddNewMethod = function() {
+            vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
+        };
 
-		vm.checkForEnter2 = function(evt) {
-			return (evt && evt.keyCode === 13 && vm.selectedItem.name) ? true : false;
-		};
 
-		vm.checkForEnter = function(evt) {
-			if (evt && evt.keyCode === 13) {
-				vm.addNewLeftSideItem(vm.leftSideItem);
-			}
-		};
 
-		vm.isEmpty = isEmpty;
+        vm.addNewMethod = function(method) {
+        	console.log(method,vm.selectedClass)
+        	ref.child(vm.selectedClass.key).child("methods").push(method,function(err){
+        		if(err){
+        			console.log(err)
+        		}
+        	});
+        	vm.method = {};
+        	vm.displayAddNewMethodFlag = false;
+        	// vm.selectedItem.methods = vm.selectedItem.methods || [];
+        	// vm.selectedItem.methods.push(makeNewMethod(name, body));
+        	// vm.newMethodName = "";
+        	// vm.newMethodBody = "";
+        };
+        // vm.removeMethod = function(item) {
+        // 	if (item && confirmDelete()) {
+        // 		var index = vm.selectedItem.methods.indexOf(item);
+        // 		vm.selectedItem.methods.splice(index, 1);
+        // 		firebaseFactory.update(vm.leftSideItems);
+        // 	}
+        // };
 
-		function isEmpty(obj) {
-			for (var prop in obj) {
-				if (obj.hasOwnProperty(prop))
-					return false;
-			}
-			return true;
-		}
+        // vm.checkForEnter2 = function(evt) {
+        // 	return (evt && evt.keyCode === 13 && vm.selectedItem.name) ? true : false;
+        // };
 
-		function makeNewLeftSideItem(name) {
-			return {
-				name: name
-			};
-		}
+        // vm.checkForEnter = function(evt) {
+        // 	if (evt && evt.keyCode === 13) {
+        // 		vm.addNewLeftSideItem(vm.leftSideItem);
+        // 	}
+        // };
 
-		function makeNewMethod(name, body) {
-			return {
-				name: name,
-				body: body
-			};
-		}
+        // vm.isEmpty = isEmpty;
 
-		function confirmDelete() {
-			return confirm("Are you sure you want to delete this?");
-		}
-	}
+        // function isEmpty(obj) {
+        // 	for (var prop in obj) {
+        // 		if (obj.hasOwnProperty(prop))
+        // 			return false;
+        // 	}
+        // 	return true;
+        // }
+
+        // function makeNewLeftSideItem(name) {
+        // 	return {
+        // 		name: name
+        // 	};
+        // }
+
+        // function makeNewMethod(name, body) {
+        // 	return {
+        // 		name: name,
+        // 		body: body
+        // 	};
+        // }
+
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete this?");
+        }
+    }
 })();
 (function() {
 	angular.module("clickawiki").directive("navBar", navBar);
@@ -158,3 +209,22 @@
 		return directive;
 	}
 })()
+// (function() {
+//     angular.module("clickawiki").filter("methodFilter", methodFilter);
+
+//     function methodFilter() {
+//         return function(input, search) {
+//             if (!input) return input;
+//             if (!search) return input;
+//             var expected = ('' + search).toLowerCase();
+//             var result = {};
+//             angular.forEach(input, function(value, key) {
+//                 var actual = ('' + value).toLowerCase();
+//                 if (actual.indexOf(expected) !== -1) {
+//                     result[key] = value;
+//                 }
+//             });
+//             return result;
+//         };
+//     }
+// })();
