@@ -10,16 +10,15 @@ var watchGroupJS = formatWatchGroup(folders, "app/scripts/", "/*js");
 
 function formatWatchGroup(list, pathConst, extension) {
 	if (list && Array.isArray(list)) {
-		var pathConst = pathConst || "",
-			extension = extension || "",
-			newArr = [];
+		pathConst = pathConst || "";
+		extension = extension || "";
+		var newArr = [];
 		for (var item in list) {
 			newArr.push(pathConst + list[item] + extension);
 		}
 		return newArr;
-	} else {
-		return [];
 	}
+	return [];
 }
 
 function watch() {
