@@ -3,7 +3,8 @@
 })();
 (function() {
 	angular.module("clickawiki").constant("constants", {
-		firebaseURL: "https://quicktest1.firebaseio.com/wiki"
+		firebaseURL: "https://quicktest1.firebaseio.com/wiki",
+		navTitle: "Clickawiki"
 	});
 })();
 (function() {
@@ -29,14 +30,13 @@
 		}
 	}
 })();
-
-//Controllers
 (function() {
 	angular.module("clickawiki").controller("mainController", mainController);
-	mainController.$inject = ["$timeout", "firebaseFactory"];
+	mainController.$inject = ["$timeout", "constants", "firebaseFactory"];
 
-	function mainController($timeout, firebaseFactory) {
+	function mainController($timeout, constants, firebaseFactory) {
 		var vm = this;
+		vm.navTitle = constants.navTitle;
 		vm.leftSideItems = [];
 		ref = firebaseFactory.getRef();
 		ref.on("value", handleDataUpdate);
@@ -45,7 +45,6 @@
 
 		function handleDataUpdate(snap) {
 			$timeout(function() {
-				console.log(snap.val())
 				vm.leftSideItems = snap.val() || [];
 			});
 		}
@@ -73,6 +72,7 @@
 
 		vm.selectClass = function(item) {
 			vm.selectedItem = item;
+			vm.editClass = false;
 		};
 
 		vm.displayAddNewMethod = function() {
@@ -85,7 +85,7 @@
 			vm.newMethodName = "";
 			vm.newMethodBody = "";
 			vm.displayAddNewMethodFlag = false;
-			firebaseFactory.update(vm.leftSideItems);
+			firebaseFactory.update(vm.leftSideItems,function(){console.log("here")}).then(function(){alert()})
 		};
 		vm.removeMethod = function(item) {
 			if (item && confirmDelete()) {
@@ -95,11 +95,25 @@
 			}
 		};
 
+		vm.checkForEnter2 = function(evt) {
+			return (evt && evt.keyCode === 13 && vm.selectedItem.name) ? true : false;
+		};
+
 		vm.checkForEnter = function(evt) {
 			if (evt && evt.keyCode === 13) {
 				vm.addNewLeftSideItem(vm.leftSideItem);
 			}
 		};
+
+		vm.isEmpty = isEmpty;
+
+		function isEmpty(obj) {
+			for (var prop in obj) {
+				if (obj.hasOwnProperty(prop))
+					return false;
+			}
+			return true;
+		}
 
 		function makeNewLeftSideItem(name) {
 			return {
@@ -119,3 +133,28 @@
 		}
 	}
 })();
+(function() {
+	angular.module("clickawiki").directive("navBar", navBar);
+	navBar.$inject = ["$compile"];
+	function navBar($compile) {
+		var template = [
+				'<nav class="navbar navbar-default">',
+				'<div class="container">',
+				'<div class="navbar-header"><a class="navbar-brand navbar-link" href="#">{{navtitle}}</a>',
+				'<button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"></button>',
+				'</div>',
+				'<div class="collapse navbar-collapse" id="navcol-1"></div>',
+				'</div>',
+				'</nav>'
+			].join('');
+		var directive = {
+			restrict: "EA",
+			template: template,
+			transclude: true,
+			scope:{ 
+				navtitle:"@"
+			}
+		}
+		return directive;
+	}
+})()

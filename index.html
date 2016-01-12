@@ -9,16 +9,9 @@
     <link rel="stylesheet" href="assets/css/user.css">
 </head>
 
-<body ng-app="clickawiki">
-	<nav class="navbar navbar-default">
-		<div class="container">
-			<div class="navbar-header"><a class="navbar-brand navbar-link" href="#">Clickawiki</a>
-				<button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"></button>
-			</div>
-			<div class="collapse navbar-collapse" id="navcol-1"></div>
-		</div>
-	</nav>
-	<div class="container" ng-controller="mainController as vm" ng-cloak>
+<body ng-app="clickawiki" ng-controller="mainController as vm" >
+	<nav-bar navTitle="{{vm.navTitle}}"></nav-bar>
+	<div class="container" ng-cloak>
 		<div class="row">
 			<div class="col-md-3 left-col">
 				<h4>Classes:</h4>
@@ -44,18 +37,35 @@
 			</div>
 			<div class="col-md-9 right-col">
 				<h4>Select a class on the left to view/edit its properties.</h4>
-				<div class="panel panel-primary" ng-show="vm.selectedItem.name">
+				<div class="panel panel-primary" ng-show="!vm.isEmpty(vm.selectedItem)">
 					<div class="panel-heading">
 						<div class="panel-title clearfix">
 							<div class="row">
 								<div class="col-md-4">
-									<span class="class-name-header">{{vm.selectedItem.name}}</span>
+									<span class="class-name-header">
+									<small>
+										<div class="btn-group pull-left" role="group" aria-label="Method operations">
+											<h3 ng-dblclick="vm.editClass = true" ng-show="!vm.editClass">{{vm.selectedItem.name}}</h3>
+											<div class="input-group method-search" ng-show="vm.editClass">
+												<input ng-readonly="!vm.editClass" ng-model="vm.selectedItem.name" type="text" class="form-control" placeholder="Class Name..." ng-dblclick="vm.editClass = false" ng-keyup="vm.editClass = !vm.checkForEnter2($event)">
+												<span class="input-group-btn">
+													<button type="button" class="btn btn-md btn-danger" title="Remove method" ng-click="vm.removeClass(vm.selectedItem)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+												</span>
+											</div>	
+										</div>
+									</small>
+
+									<!-- <span class="pull-left glyphicon glyphicon-remove" ng-click="vm.removeClass(item)" aria-hidden="true"></span>
+									
+									
+									<span class="glyphicon glyphicon-pencil" ng-click="vm.removeClass(item)" aria-hidden="true"></span>
+									</span> -->
+									<!-- <button type="button" class="btn btn-info">Edit class <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+										<button type="button" class="btn btn-danger" ng-click="vm.removeClass(vm.selectedItem)">Remove class <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button> -->
 								</div>
 								<div class="col-md-8">
 									<div class="btn-group pull-right" role="group" aria-label="Class operations">
 										<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
-										<button type="button" class="btn btn-info">Edit class <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
-										<button type="button" class="btn btn-danger" ng-click="vm.removeClass(vm.selectedItem)">Remove class <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 									</div>
 								</div>
 							</div>

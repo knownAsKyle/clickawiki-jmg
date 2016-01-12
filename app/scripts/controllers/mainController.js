@@ -1,9 +1,10 @@
 (function() {
 	angular.module("clickawiki").controller("mainController", mainController);
-	mainController.$inject = ["$timeout", "firebaseFactory"];
+	mainController.$inject = ["$timeout", "constants", "firebaseFactory"];
 
-	function mainController($timeout, firebaseFactory) {
+	function mainController($timeout, constants, firebaseFactory) {
 		var vm = this;
+		vm.navTitle = constants.navTitle;
 		vm.leftSideItems = [];
 		ref = firebaseFactory.getRef();
 		ref.on("value", handleDataUpdate);
@@ -12,7 +13,6 @@
 
 		function handleDataUpdate(snap) {
 			$timeout(function() {
-				console.log(snap.val())
 				vm.leftSideItems = snap.val() || [];
 			});
 		}
@@ -40,6 +40,7 @@
 
 		vm.selectClass = function(item) {
 			vm.selectedItem = item;
+			vm.editClass = false;
 		};
 
 		vm.displayAddNewMethod = function() {
@@ -52,7 +53,7 @@
 			vm.newMethodName = "";
 			vm.newMethodBody = "";
 			vm.displayAddNewMethodFlag = false;
-			firebaseFactory.update(vm.leftSideItems);
+			firebaseFactory.update(vm.leftSideItems,function(){console.log("here")}).then(function(){alert()})
 		};
 		vm.removeMethod = function(item) {
 			if (item && confirmDelete()) {
@@ -62,11 +63,25 @@
 			}
 		};
 
+		vm.checkForEnter2 = function(evt) {
+			return (evt && evt.keyCode === 13 && vm.selectedItem.name) ? true : false;
+		};
+
 		vm.checkForEnter = function(evt) {
 			if (evt && evt.keyCode === 13) {
 				vm.addNewLeftSideItem(vm.leftSideItem);
 			}
 		};
+
+		vm.isEmpty = isEmpty;
+
+		function isEmpty(obj) {
+			for (var prop in obj) {
+				if (obj.hasOwnProperty(prop))
+					return false;
+			}
+			return true;
+		}
 
 		function makeNewLeftSideItem(name) {
 			return {

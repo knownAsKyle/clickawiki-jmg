@@ -27,7 +27,7 @@ function watch() {
 }
 
 function compress() {
-	return gulp.src(['app/scripts/main.js', 'app/scripts/*.js'])
+	return gulp.src(watchGroupJS)
 		.pipe(concat('script.js'))
 		.pipe(gulp.dest('dist'))
 		.pipe(uglify())
