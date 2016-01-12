@@ -78,10 +78,13 @@
 								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
 							</span>
 						</div>
-						<div class="input-group new-method-wrapper" ng-show="vm.displayAddNewMethodFlag">
-							<input type="text" ng-model="vm.newMethodName" class="new-method-name" placeholder="Method name..."/><br>
-							<textarea ng-model="vm.newMethodBody" class="new-method-body" placeholder="Method body..."></textarea>
-							<button class="btn btn-success add-new-method" ng-click="vm.addNewMethod(vm.newMethodName, vm.newMethodBody)">Submit</button>
+						<div class="well" ng-show="vm.displayAddNewMethodFlag">
+							<div class="form-group new-method-wrapper">
+								<label>New method:</label>
+								<input type="text" ng-model="vm.newMethodName" class="new-method-name form-control" placeholder="Method name..."/><br>
+								<textarea ng-model="vm.newMethodBody" class="new-method-body form-control" rows="4" placeholder="Method body..."></textarea>
+							</div>
+							<button type="button" class="btn btn-success add-new-method" ng-click="vm.addNewMethod(vm.newMethodName, vm.newMethodBody)">Submit</button>
 						</div>
 						<div class="methods" ng-repeat="method in vm.selectedItem.methods| filter: {name: vm.methodSearchText} track by $index">
 							<div class="well method">
