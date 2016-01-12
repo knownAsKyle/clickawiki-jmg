@@ -23,7 +23,10 @@
 	border-top: 2px solid #dddddd;
 }
 
-
+.new-method-remove-param{
+	vertical-align: middle;
+	color: #d9534f;
+}
 
 
 .reviewer-name{

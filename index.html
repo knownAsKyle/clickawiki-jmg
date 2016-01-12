@@ -36,7 +36,7 @@
 						<div class="input-group input-group-sm">
 							<input type="text" class="form-control" ng-model="vm.leftSideItem" placeholder="Class name..." ng-keypress="vm.checkForEnter($event)">
 							<span class="input-group-btn">
-								<button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.leftSideItem)"><span class="glyphicon glyphicon-plus-sign"></span></button>
+								<button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.leftSideItem)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
 							</span>
 						</div>
 					</div>
@@ -53,7 +53,7 @@
 								</div>
 								<div class="col-md-8">
 									<div class="btn-group pull-right" role="group" aria-label="Class operations">
-										<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+										<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()">Add method <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
 										<button type="button" class="btn btn-info">Edit class <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
 										<button type="button" class="btn btn-danger" ng-click="vm.removeClass(vm.selectedItem)">Remove class <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 									</div>
@@ -65,16 +65,92 @@
 						<div class="input-group method-search">
 							<input ng-show="vm.selectedItem.name" ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
 							<span class="input-group-btn">
-								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
 							</span>
 						</div>
-						<div class="well" ng-show="vm.displayAddNewMethodFlag">
-							<div class="form-group new-method-wrapper">
-								<label>New method:</label>
-								<input type="text" ng-model="vm.newMethodName" class="new-method-name form-control" placeholder="Method name..."/><br>
-								<textarea ng-model="vm.newMethodBody" class="new-method-body form-control" rows="4" placeholder="Method body..."></textarea>
-							</div>
-							<button type="button" class="btn btn-success add-new-method" ng-click="vm.addNewMethod(vm.newMethodName, vm.newMethodBody)">Submit</button>
+						<div class="well clearfix" ng-show="vm.displayAddNewMethodFlag">
+							<form class="form-horizontal" role="form">
+								<h3>New method:</h3>
+								<input type="text" ng-model="vm.newMethodName" class="form-control" id="new-method-name" placeholder="Method name"/><br>
+								<div class="form-group">
+									<div class="col-sm-3 ">
+										<select class="form-control" id="new-method-returntype">
+											<option selected disabled>Return type</option>
+											<option value="Array">Array</option>
+											<option value="ArrayList">ArrayList</option>
+											<option value="Boolean">Boolean</option>
+											<option value="Integer">Integer</option>
+											<option value="Object">Object</option>
+											<option value="String">String</option>
+										</select>
+									</div>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="Return description" />
+									</div>
+								</div>
+								<div class="form-group form-group-sm">
+									<div class="col-sm-12">
+										<label for="new-method-parameters">Parameters:</label>
+										<ul class="list-group" id="new-method-parameters">
+											<!-- Repeat these... -->
+											<li class="list-group-item clearfix">
+												<div class="col-sm-3 ">
+													<select class="form-control">
+														<option selected disabled>Return type</option>
+														<option value="Array">Array</option>
+														<option value="ArrayList">ArrayList</option>
+														<option value="Boolean">Boolean</option>
+														<option value="Integer">Integer</option>
+														<option value="Object">Object</option>
+														<option value="String">String</option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<input type="text" class="form-control" placeholder="Name" />
+												</div>
+												<div class="col-sm-6">
+													<input type="text" class="form-control" placeholder="Description" />
+												</div>
+												<div class="col-sm-1">
+													<a href="#"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
+												</div>
+											</li>
+											<li class="list-group-item clearfix">
+												<div class="col-sm-3 ">
+													<select class="form-control">
+														<option selected disabled>Return type</option>
+														<option value="Array">Array</option>
+														<option value="ArrayList">ArrayList</option>
+														<option value="Boolean">Boolean</option>
+														<option value="Integer">Integer</option>
+														<option value="Object">Object</option>
+														<option value="String">String</option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<input type="text" class="form-control" placeholder="Name" />
+												</div>
+												<div class="col-sm-6">
+													<input type="text" class="form-control" placeholder="Description" />
+												</div>
+												<div class="col-sm-1">
+													<a href="#"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
+												</div>
+											</li>
+											<!-- End repeater -->
+											<li class="list-group-item">
+												<a href="javascript:void(0);" ng-click="">Add parameter <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+											</li>
+										</ul>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-12">
+										<textarea ng-model="vm.newMethodBody" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
+									</div>
+								</div>
+								<button type="button" class="btn btn-success add-new-method pull-right" ng-click="vm.addNewMethod(vm.newMethodName, vm.newMethodBody)">Submit</button>
+							</form>
 						</div>
 						<div class="methods" ng-repeat="method in vm.selectedItem.methods| filter: {name: vm.methodSearchText} track by $index">
 							<div class="well method">
