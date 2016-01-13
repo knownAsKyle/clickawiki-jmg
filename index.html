@@ -37,38 +37,35 @@
 			<div class="col-md-9 right-col">
 				<h4>Select a class on the left to view/edit its properties.</h4>
 				<div class="panel panel-primary" ng-show="vm.selectedClass">
-					<div class="panel-heading">
-						<div class="panel-title clearfix">
-							<div class="row">
-								<div class="col-md-4">
-									<span class="class-name-header">
-									<small>
-										<div class="btn-group pull-left" role="group" aria-label="Method operations">
-											<h3 ng-dblclick="vm.editClass = true" ng-show="!vm.editClass">{{vm.selectedClass.val.name}}</h3>
-											<div class="input-group method-search" ng-show="vm.editClass">
-												<input ng-readonly="!vm.editClass" ng-model="vm.selectedClass.val.name" type="text" class="form-control" placeholder="Class Name..." ng-dblclick="vm.editClass = false" ng-change="vm.updateClass(vm.selectedClass)" ng-keyup="vm.editClass = !vm.checkForEnter2($event)">
-												<span class="input-group-btn">
-													<button type="button" class="btn btn-md btn-danger" title="Remove method" ng-click="vm.removeClass(vm.selectedClass.key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-												</span>
-											</div>	
-										</div>
-									</small>
+					<div class="panel-heading clearfix">
+						<div class="row">
+							<div class="col-md-8 class-name-header">
+								<h3 class="panel-title" ng-show="!vm.editClass">Class {{vm.selectedClass.val.name}}</h3>
+								<div class="input-group" ng-show="vm.editClass">
+									<span class="input-group-addon" id="basic-addon3">Class </span>
+									<input ng-readonly="!vm.editClass" ng-model="vm.selectedClass.val.name" type="text" class="form-control" placeholder="Class Name..." ng-dblclick="vm.editClass = false" ng-change="vm.updateClass(vm.selectedClass)" ng-keyup="vm.editClass = !vm.checkForEnter2($event)">
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-md btn-success" title="Save class name" ng-click="vm.editClass = false"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+									</span>
 								</div>
-								<div class="col-md-8">
-									<div class="btn-group pull-right" role="group" aria-label="Class operations">
-										<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+							</div>
+							<div class="col-md-4">
+								<div class="btn-group pull-right" role="group" aria-label="Class operations">
+									<div class="dropdown">
+										<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="vm.editClass">
+											<span class="glyphicon glyphicon-cog"></span>
+										</button>
+										<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+											<li><a href="#" ng-click="vm.editClass = true">Edit class name</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="#" ng-click="vm.removeClass(vm.selectedClass.key)">Delete class {{vm.selectedClass.val.name}}</a></li>
+										</ul>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="panel-body">
-						<div class="input-group method-search">
-							<input ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
-							<span class="input-group-btn">
-								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
-							</span>
-						</div>
 						<div class="well clearfix" ng-show="vm.displayAddNewMethodFlag">
 							<form class="form-horizontal" role="form">
 								<h3>New method:</h3>
@@ -135,8 +132,21 @@
 										<textarea ng-model="vm.newMethodBody" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
 									</div>
 								</div>
-								<button type="button" class="btn btn-success add-new-method pull-right" ng-click="vm.addNewMethod(vm.method)">Submit</button>
+								<div class="btn-toolbar pull-right">
+									<button type="button" class="btn btn-success add-new-method" ng-click="vm.addNewMethod(vm.method)">Submit</button>
+									<!-- TODO: Clear out all the new method fields when use clicks Cancel button... -->
+									<button type="button" class="btn btn-warning cancel-new-method" ng-click="vm.displayAddNewMethodFlag = false">Cancel</button>
+								</div>
 							</form>
+						</div>
+						<div class="input-group method-filter">
+							<input ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
+							<span class="input-group-btn">
+								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
+							</span>
+						</div>
+						<div class="top-buffer">
+							<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayAddNewMethodFlag">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
 						</div>
 						<div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods">
 							<div class="well method">
