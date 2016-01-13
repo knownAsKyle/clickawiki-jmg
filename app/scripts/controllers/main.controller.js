@@ -1,16 +1,38 @@
 (function() {
     angular.module("clickawiki").controller("mainController", mainController);
-    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory"];
+    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory"];
 
-    function mainController($timeout, constants, firebaseFactory, classFactory) {
+    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory) {
         var vm = this;
-        vm.navTitle = constants.navTitle;
+        /*Set db reference*/
+        var ref = firebaseFactory.getRef();
+        /*Set some defaults*/
+        vm.headerTitle = constants.headerTitle;
         vm.returnTypes = constants.types;
         vm.allClasses = [];
-        var ref = firebaseFactory.getRef();
-        ref.on("value", handleDataUpdate);
         // vm.displayAddNewMethodFlag = false;
+        /*Set listener for db changes*/
+        ref.on("value", handleDataUpdate);
+        /*template exposed functions*/
 
+        //for classes
+        vm.addNewClass = addNewClass;
+        vm.removeClass = removeClass;
+        vm.updateClass = updateClass;
+        vm.selectClass = selectClass;
+        //for methods associated with classes
+        vm.addNewMethod = addNewMethod;
+        vm.removeMethod = removeMethod;
+        //for attributes associated with methods
+        vm.addMethodAttribute = addMethodAttribute;
+        vm.removeMethodAttribute = removeMethodAttribute;
+        //extra stuff
+        vm.checkForEnter = checkForEnter;
+        vm.setEditClassName = setEditClassName;
+        vm.displayAddNewMethod = displayAddNewMethod;
+        vm.resetMethodForm = resetMethodForm;
+
+        /*Action for db update*/
         function handleDataUpdate(snap) {
             $timeout(function() {
                 console.log("handleDataUpdate() ", snap.val());
@@ -18,96 +40,74 @@
             });
         }
 
-        vm.addNewClass = function(className) {
+        /*controller class functions*/
+        function addNewClass(className) {
             if (className) {
-                ref.push(classFactory.makeNewClass(className));
+                classFactory.addClass(ref, className);
                 vm.newClassName = "";
             }
-        };
+        }
 
-        vm.removeClass = function(id) {
-            if (id && confirmDelete()) {
+        function removeClass(id) {
+            if (id && helperFactory.confirmDelete()) {
                 classFactory.removeClass(ref, id);
             }
-        };
+        }
 
-        vm.updateClass = function(classObj) {
+        function updateClass(classObj) {
             if (classObj && classObj.val.name.length > 0) {
                 classFactory.updateClass(ref, classObj.key, classObj.val);
             }
-        };
-
-        vm.selectClass = function(key, val) {
+        }
+        //handles when a class is selected
+        function selectClass(key, val) {
             vm.selectedClass = {};
             vm.selectedClass.key = key;
             vm.selectedClass.val = val;
             vm.displayAddNewMethodFlag = false;
-            // vm.editClass = false;
-        };
-
-        vm.displayAddNewMethod = function() {
-            vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
-        };
-
-
-
-        vm.addNewMethod = function(method) {
-        	console.log(method,vm.selectedClass)
-        	ref.child(vm.selectedClass.key).child("methods").push(method,function(err){
-        		if(err){
-        			console.log(err)
-        		}
-        	});
-        	vm.method = {};
-        	vm.displayAddNewMethodFlag = false;
-        	// vm.selectedItem.methods = vm.selectedItem.methods || [];
-        	// vm.selectedItem.methods.push(makeNewMethod(name, body));
-        	// vm.newMethodName = "";
-        	// vm.newMethodBody = "";
-        };
-        // vm.removeMethod = function(item) {
-        // 	if (item && confirmDelete()) {
-        // 		var index = vm.selectedItem.methods.indexOf(item);
-        // 		vm.selectedItem.methods.splice(index, 1);
-        // 		firebaseFactory.update(vm.leftSideItems);
-        // 	}
-        // };
-
-        // vm.checkForEnter2 = function(evt) {
-        // 	return (evt && evt.keyCode === 13 && vm.selectedItem.name) ? true : false;
-        // };
-
-        // vm.checkForEnter = function(evt) {
-        // 	if (evt && evt.keyCode === 13) {
-        // 		vm.addNewLeftSideItem(vm.leftSideItem);
-        // 	}
-        // };
-
-        // vm.isEmpty = isEmpty;
-
-        // function isEmpty(obj) {
-        // 	for (var prop in obj) {
-        // 		if (obj.hasOwnProperty(prop))
-        // 			return false;
-        // 	}
-        // 	return true;
-        // }
-
-        // function makeNewLeftSideItem(name) {
-        // 	return {
-        // 		name: name
-        // 	};
-        // }
-
-        // function makeNewMethod(name, body) {
-        // 	return {
-        // 		name: name,
-        // 		body: body
-        // 	};
-        // }
-
-        function confirmDelete() {
-            return confirm("Are you sure you want to delete this?");
+            vm.setEditClassName(false);
         }
+
+        /*controller method functions*/
+        function addNewMethod(method) {
+            methodFactory.addMethod(ref, vm.selectedClass.key, method);
+            vm.method = {};
+            vm.method.returnType = 'Return type';
+            vm.displayAddNewMethodFlag = false;
+        }
+
+        function removeMethod(key) {
+            if (key && helperFactory.confirmDelete()) {
+                methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+            }
+        }
+
+        function addMethodAttribute() {
+            vm.method.attributes = vm.method.attributes || [];
+            vm.method.attributes.push({});
+        }
+
+        function removeMethodAttribute(ev, index, attr) {
+            ev.preventDefault();
+            if (vm.method.attributes) {
+                vm.method.attributes.splice(index, 1);
+            }
+        }
+
+        /*Extra stuff*/
+        //handle enter press
+        function checkForEnter(evt, val, callback) {
+            return helperFactory.checkForEnterPress(evt) ? callback(val) : false;
+        }
+        //value to show/hide edit class name feature
+        function setEditClassName(bool) {
+            return (vm.editClass = bool);
+        }
+
+        function displayAddNewMethod() {
+            vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
+        }
+
+        function resetMethodForm() {}
     }
 })();

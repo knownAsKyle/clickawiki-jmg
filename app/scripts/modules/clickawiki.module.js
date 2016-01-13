@@ -1,3 +1,3 @@
 (function() {
-	angular.module("clickawiki", []);
+    angular.module("clickawiki", []);
 })();
