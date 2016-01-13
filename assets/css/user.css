@@ -6,11 +6,7 @@
 	background-color: #f5f5f5;
 }
 
-.class-name{
-	font-weight: bold;
-}
-
-.class-name-header{
+.class-name-header .panel-title {
 	font-size: 1.5em;
 	font-weight: bold;
 }
@@ -23,9 +19,18 @@
 	border-top: 2px solid #dddddd;
 }
 
+#new-method-parameters .list-group-item{
+	background-color: #dddddd;
+	border: 1px solid #bbbbbb;
+}
+
 .new-method-remove-param{
 	vertical-align: middle;
 	color: #d9534f;
+}
+
+.top-buffer {
+	margin-top: 20px;
 }
 
 
