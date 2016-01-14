@@ -1,8 +1,8 @@
 (function() {
     angular.module("clickawiki").factory("helperFactory", helperFactory);
-    helperFactory.$inject = [];
+    helperFactory.$inject = ["constants"];
 
-    function helperFactory() {
+    function helperFactory(constants) {
         return {
             checkForEnterPress: checkForEnterPress,
             confirmDelete: confirmDelete
@@ -12,8 +12,10 @@
             return evt && evt.keyCode === 13 ? true : false;
         }
 
-        function confirmDelete() {
-            return confirm("Are you sure you want to delete this?");
+        function confirmDelete(msg, partial) {
+            msg = partial ? constants.defaultDeleteMessage + "(" + msg + ")" : msg;
+            msg = msg || constants.defaultDeleteMessage;
+            return confirm(msg);
         }
     }
 })();
