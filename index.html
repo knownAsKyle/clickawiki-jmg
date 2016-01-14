@@ -130,7 +130,7 @@
                             <div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
                                 <div class="well method">
                                     <h4 class="method-name">
-                                    <i>{{method.returnType}}</i><b>{{method.name}}</b>(<span ng-repeat="(key,attr) in method.attributes track by $index"> {{attr.returnType}} {{attr.name}}<span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
+                                    <i>{{method.returnType}}</i> <b>{{method.name}}</b>(<span ng-repeat="(key,attr) in method.attributes track by $index"> {{attr.returnType}} {{attr.name}}<span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
                                     <small>
 	                                    <div class="btn-group pull-right" role="group" aria-label="Method operations">
 	                                        <button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.editMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
