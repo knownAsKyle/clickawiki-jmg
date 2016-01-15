@@ -2,33 +2,46 @@
     angular.module("clickawiki", []);
 })();
 (function() {
-	angular.module("clickawiki").constant("constants", {
-		firebaseURL: "https://quicktest1.firebaseio.com/wiki",
-		headerTitle: "Clickawiki",
-		defaultDeleteMessage: "Are you sure you want to delete this? ",
-		types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String"],
-		auth: {
-			email: "admin@admin.com"
-		},
-		popUpDeleteSettings: {
-			title: "Are you sure?",
-			text: "",
-			type: "warning",
-			showCancelButton: true,
-			confirmButtonColor: "#5cb85c",
-			confirmButtonText: "Yes, delete it!",
-			cancelButtonText: "No, cancel!",
-			closeOnConfirm: false,
-			closeOnCancel: false
-		}
-	});
+    angular.module("clickawiki").constant("constants", {
+        firebaseURL: "https://quicktest1.firebaseio.com/wiki",
+        //firebaseURL: "https://apiwiki.firebaseio.com",
+        headerTitle: "Clickawiki",
+        defaultDeleteMessage: "Are you sure you want to delete this? ",
+        types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String"],
+        auth: {
+            email: "admin@admin.com"
+        },
+        popUpDeleteSettings: {
+            title: "Are you sure?",
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#5cb85c",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+        loginPromptSettings: {
+            title: "Login",
+            text: "Please provide your access code:",
+            type: "input",
+            inputType: "password",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            animation: "slide-from-top",
+            inputValue: "click",
+            inputPlaceholder: "Acess code..."
+        }
+    });
 })();
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);
-    authFactory.$inject = [];
+    authFactory.$inject = ["firebaseFactory", "constants"];
 
-    function authFactory() {
+    function authFactory(firebaseFactory, constants) {
         return {
+            loginPrompt: loginPrompt,
             getAuth: getAuth,
             logout: logout,
             login: login
@@ -39,6 +52,18 @@
         function logout(ref) {
             return ref.unauth();
         }
+
+        function loginPrompt(inputValue) {
+            if (inputValue === false) return false;
+            if (inputValue === "") {
+                swal.showInputError("You need to enter your access code!");
+                return false;
+            }
+            swal.close();
+            login(firebaseFactory.getRef(), null, inputValue)
+            console.log("now loging in with access code: ", inputValue);
+        }
+
 
         function login(ref, u, p, token) {
             if (!token) {
@@ -55,6 +80,7 @@
 
         function loginResponse(err, authData) {
             if (err) {
+            	swal("Login Failure", err, "error");
                 console.log(err);
             } else {
                 //set localstorage with session id to use auto login from then on.
@@ -182,9 +208,9 @@
 })();
 (function() {
     angular.module("clickawiki").controller("mainController", mainController);
-    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory"];
+    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
 
-    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory) {
+    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
         var vm = this;
         /*Set db reference*/
         var ref = firebaseFactory.getRef();
@@ -196,6 +222,17 @@
         // vm.displayMethodForm = false;
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
+        ref.onAuth(function(auth) {
+            console.log("checking auth: ", auth)
+            if (localStorage && auth) {
+                localStorage.setItem("cw_token", auth.token);
+            }
+        });
+
+        if (localStorage.getItem("cw_token")) {
+            var token = localStorage.getItem("cw_token");
+            authFactory.login(ref, null, null, token);
+        }
         /*template exposed functions*/
 
         //for classes
@@ -216,6 +253,15 @@
         vm.displayAddNewMethod = displayAddNewMethod;
         vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
+
+
+        vm.loginPrompt = loginPrompt;
+
+
+
+        function loginPrompt() {
+            swal(constants.loginPromptSettings, authFactory.loginPrompt);
+        }
 
         /*Action for db update*/
         function handleDataUpdate(snap) {

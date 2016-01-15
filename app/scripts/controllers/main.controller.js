@@ -1,8 +1,8 @@
 (function() {
     angular.module("clickawiki").controller("mainController", mainController);
-    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory"];
+    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
 
-    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory) {
+    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
         var vm = this;
         /*Set db reference*/
         var ref = firebaseFactory.getRef();
@@ -14,6 +14,17 @@
         // vm.displayMethodForm = false;
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
+        ref.onAuth(function(auth) {
+            console.log("checking auth: ", auth)
+            if (localStorage && auth) {
+                localStorage.setItem("cw_token", auth.token);
+            }
+        });
+
+        if (localStorage.getItem("cw_token")) {
+            var token = localStorage.getItem("cw_token");
+            authFactory.login(ref, null, null, token);
+        }
         /*template exposed functions*/
 
         //for classes
@@ -34,6 +45,15 @@
         vm.displayAddNewMethod = displayAddNewMethod;
         vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
+
+
+        vm.loginPrompt = loginPrompt;
+
+
+
+        function loginPrompt() {
+            swal(constants.loginPromptSettings, authFactory.loginPrompt);
+        }
 
         /*Action for db update*/
         function handleDataUpdate(snap) {
