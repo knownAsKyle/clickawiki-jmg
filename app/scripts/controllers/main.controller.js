@@ -9,8 +9,9 @@
         /*Set some defaults*/
         vm.headerTitle = constants.headerTitle;
         vm.returnTypes = constants.types;
+        vm.formTitleText = "New";
         vm.allClasses = [];
-        // vm.displayAddNewMethodFlag = false;
+        // vm.displayMethodForm = false;
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
         /*template exposed functions*/
@@ -23,6 +24,7 @@
         //for methods associated with classes
         vm.addNewMethod = addNewMethod;
         vm.removeMethod = removeMethod;
+        vm.updateMethod = updateMethod;
         //for attributes associated with methods
         vm.addMethodAttribute = addMethodAttribute;
         vm.removeMethodAttribute = removeMethodAttribute;
@@ -30,6 +32,7 @@
         vm.checkForEnter = checkForEnter;
         vm.setEditClassName = setEditClassName;
         vm.displayAddNewMethod = displayAddNewMethod;
+        vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
 
         /*Action for db update*/
@@ -51,6 +54,8 @@
         function removeClass(id) {
             if (id && helperFactory.confirmDelete()) {
                 classFactory.removeClass(ref, id);
+                vm.selectedClass = null;
+                console.log("removeClass() ", vm.selectedClass);
             }
         }
 
@@ -61,11 +66,12 @@
         }
         //handles when a class is selected
         function selectClass(key, val) {
+            vm.formTitleText = "New";
             vm.selectedClass = {};
             vm.selectedClass.key = key;
             vm.selectedClass.val = val;
-            vm.displayAddNewMethodFlag = false;
             vm.setEditClassName(false);
+            resetMethodForm();
         }
 
         /*controller method functions*/
@@ -73,13 +79,20 @@
             methodFactory.addMethod(ref, vm.selectedClass.key, method);
             vm.method = {};
             vm.method.returnType = 'Return type';
-            vm.displayAddNewMethodFlag = false;
+            vm.displayMethodForm = false;
         }
 
-        function removeMethod(key, name) {
-            if (key && helperFactory.confirmDelete(name, true)) {
+        function removeMethod(key) {
+            if (key && helperFactory.confirmDelete(vm.selectedClass.val.methods[key].name, true)) {
                 methodFactory.removeMethod(ref, vm.selectedClass.key, key);
             }
+        }
+
+        function updateMethod(method) {
+            vm.displayMethodForm = true;
+            vm.formTitleText = "Edit";
+            vm.method = method;
+            console.log(method);
         }
 
         function addMethodAttribute() {
@@ -105,9 +118,20 @@
         }
 
         function displayAddNewMethod() {
-            vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
+            vm.displayMethodForm = !vm.displayMethodForm;
         }
 
-        function resetMethodForm() {}
+        function cancelMethodForm() {
+            vm.displayMethodForm = false;
+            vm.formTitleText = "New";
+            resetMethodForm();
+        }
+
+        function resetMethodForm() {
+            vm.method = {};
+            vm.method.returnType = 'Return type';
+            vm.method.attributes = [];
+            vm.displayMethodForm = false;
+        }
     }
 })();

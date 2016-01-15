@@ -13,8 +13,8 @@
         }
 
         function confirmDelete(msg, partial) {
-            msg = msg || constants.confirmDeleteDefault;
-            msg = partial ? constants.confirmDeleteDefault + msg : msg;
+            msg = partial ? constants.defaultDeleteMessage + "(" + msg + ")" : msg;
+            msg = msg || constants.defaultDeleteMessage;
             return confirm(msg);
         }
     }
