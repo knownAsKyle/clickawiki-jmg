@@ -86,8 +86,8 @@
                                             <ul class="list-group" id="new-method-parameters">
                                                 <li class="list-group-item clearfix" ng-repeat="(key,attr) in vm.method.attributes track by $index">
                                                     <div class="col-sm-3 ">
-                                                        <select ng-model="attr.returnType" ng-init="attr.returnType = 'Return type'" class="form-control">
-                                                            <option selected disabled>Return type</option>
+                                                        <select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
+                                                            <option selected disabled>Type</option>
                                                             <option ng-repeat="type in vm.returnTypes track by $index" value="{{type}}">{{type}}</option>
                                                         </select>
                                                     </div>
@@ -125,24 +125,36 @@
                                 <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
                                 </span>
                             </div>
-                            <div class="top-buffer">
+                            <div class="top-buffer bottom-buffer">
                                 <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
                             </div>
                             <div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
                                 <div class="well method">
                                     <h4 class="method-name">
-                                    <i>{{method.returnType}}</i> <b>{{method.name}}</b>(<span ng-repeat="(key,attr) in method.attributes track by $index"> {{attr.returnType}} {{attr.name}}<span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
-                                    <small>
-	                                    <div class="btn-group pull-right" role="group" aria-label="Method operations">
-	                                        <button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.updateMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
-	                                        <button type="button" class="btn btn-sm btn-default" title="Remove method" ng-click="vm.removeMethod(key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-	                                    </div>
-                                    </small>
+										<em>{{method.returnType}}</em> <strong>.{{method.name}}</strong>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
+										<small>
+											<div class="btn-group pull-right" role="group" aria-label="Method operations">
+												<button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.editMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+												<button type="button" class="btn btn-sm btn-default" title="Remove method" ng-click="vm.removeMethod(key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+											</div>
+										</small>
                                     </h4>
                                     <hr>
-                                    <div class="method-body">
-                                    	<p><i>{{method.returnDescription}}</i></p>
-                                        <p>{{method.notes}}</p>
+									<div class="method-body">
+										<dl>
+											<dt>Parameters:</dt>
+											<dd class="parameter-output" ng-repeat="(key, attr) in method.attributes track by $index">
+												<span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span> - {{attr.description}}
+											</dd>
+											<dt>Returns:</dt>
+											<dd class="returns-statement">
+												<span class="method-return-type">{{method.returnType}}</span> - <span class="method-return-description">{{method.returnDescription}}</span>
+											</dd>
+											<dt>Notes:</dt>
+											<dd>
+												{{method.notes}}
+											</dd>
+										</dl>
                                     </div>
                                 </div>
                             </div>
