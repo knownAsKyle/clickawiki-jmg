@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Clickawiki - Clickability Wiki</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="assets/css/sweetalert.css">
         <link rel="stylesheet" href="assets/css/user.css">
     </head>
     <body ng-app="clickawiki" ng-controller="mainController as vm" >
@@ -64,9 +65,9 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <div class="well clearfix" ng-show="vm.displayAddNewMethodFlag">
+                            <div class="well clearfix" ng-show="vm.displayMethodForm">
                                 <form class="form-horizontal" role="form">
-                                    <h3>New method:</h3>
+                                    <h3>{{vm.formTitleText}} method:</h3>
                                     <input type="text" ng-model="vm.method.name" class="form-control" id="new-method-name" placeholder="Method name"/><br>
                                     <div class="form-group">
                                         <div class="col-sm-3 ">
@@ -85,8 +86,13 @@
                                             <ul class="list-group" id="new-method-parameters">
                                                 <li class="list-group-item clearfix" ng-repeat="(key,attr) in vm.method.attributes track by $index">
                                                     <div class="col-sm-3 ">
+<<<<<<< HEAD
                                                         <select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
                                                             <option selected disabled>Type</option>
+=======
+                                                        <select ng-model="attr.returnType" ng-init="attr.returnType = 'Return type'" class="form-control">
+                                                            <option selected disabled>Return type</option>
+>>>>>>> 2f27871accc1cd0e41df70391bbe9f28df87f351
                                                             <option ng-repeat="type in vm.returnTypes track by $index" value="{{type}}">{{type}}</option>
                                                         </select>
                                                     </div>
@@ -114,7 +120,7 @@
                                     <div class="btn-toolbar pull-right">
                                         <button type="button" class="btn btn-success add-new-method" ng-click="vm.addNewMethod(vm.method)">Submit</button>
                                         <!-- TODO: Clear out all the new method fields when use clicks Cancel button... kyle - make resetMethodForm()-->
-                                        <button type="button" class="btn btn-warning cancel-new-method" ng-click="vm.displayAddNewMethodFlag = false">Cancel</button>
+                                        <button type="button" class="btn btn-warning cancel-new-method" ng-click="vm.cancelMethodForm()">Cancel</button>
                                     </div>
                                 </form>
                             </div>
@@ -124,12 +130,18 @@
                                 <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
                                 </span>
                             </div>
+<<<<<<< HEAD
                             <div class="top-buffer bottom-buffer">
                                 <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayAddNewMethodFlag">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+=======
+                            <div class="top-buffer">
+                                <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+>>>>>>> 2f27871accc1cd0e41df70391bbe9f28df87f351
                             </div>
                             <div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
                                 <div class="well method">
                                     <h4 class="method-name">
+<<<<<<< HEAD
 										<em>{{method.returnType}}</em> <strong>.{{method.name}}</strong>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
 										<small>
 											<div class="btn-group pull-right" role="group" aria-label="Method operations">
@@ -137,6 +149,15 @@
 												<button type="button" class="btn btn-sm btn-default" title="Remove method" ng-click="vm.removeMethod(key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
 											</div>
 										</small>
+=======
+                                    <i>{{method.returnType}}</i> <b>{{method.name}}</b>(<span ng-repeat="(key,attr) in method.attributes track by $index"> {{attr.returnType}} {{attr.name}}<span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
+                                    <small>
+	                                    <div class="btn-group pull-right" role="group" aria-label="Method operations">
+	                                        <button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.updateMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+	                                        <button type="button" class="btn btn-sm btn-default" title="Remove method" ng-click="vm.removeMethod(key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+	                                    </div>
+                                    </small>
+>>>>>>> 2f27871accc1cd0e41df70391bbe9f28df87f351
                                     </h4>
                                     <hr>
 									<div class="method-body">
@@ -166,6 +187,7 @@
         <script src="assets/js/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+        <script src="assets/js/sweetalert.min.js"></script>
         <script src="assets/js/script.js"></script>
         <script src="dist/script.js"></script>
     </body>

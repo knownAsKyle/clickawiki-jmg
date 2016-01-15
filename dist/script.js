@@ -2,11 +2,65 @@
     angular.module("clickawiki", []);
 })();
 (function() {
-    angular.module("clickawiki").constant("constants", {
-        firebaseURL: "https://quicktest1.firebaseio.com/wiki",
-        headerTitle: "Clickawiki",
-        types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String"]
-    });
+	angular.module("clickawiki").constant("constants", {
+		firebaseURL: "https://quicktest1.firebaseio.com/wiki",
+		headerTitle: "Clickawiki",
+		defaultDeleteMessage: "Are you sure you want to delete this? ",
+		types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String"],
+		auth: {
+			email: "admin@admin.com"
+		},
+		popUpDeleteSettings: {
+			title: "Are you sure?",
+			text: "",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#5cb85c",
+			confirmButtonText: "Yes, delete it!",
+			cancelButtonText: "No, cancel!",
+			closeOnConfirm: false,
+			closeOnCancel: false
+		}
+	});
+})();
+(function() {
+    angular.module("clickawiki").factory("authFactory", authFactory);
+    authFactory.$inject = [];
+
+    function authFactory() {
+        return {
+            getAuth: getAuth,
+            logout: logout,
+            login: login
+        };
+
+        function getAuth() {}
+
+        function logout(ref) {
+            return ref.unauth();
+        }
+
+        function login(ref, u, p, token) {
+            if (!token) {
+                u = u || constants.auth.email;
+                var auth = {};
+                auth.email = u;
+                auth.password = p;
+                ref.authWithPassword(auth, loginResponse);
+            } else {
+                ref.authWithCustomToken(token, loginResponse);
+            }
+
+        }
+
+        function loginResponse(err, authData) {
+            if (err) {
+                console.log(err);
+            } else {
+                //set localstorage with session id to use auto login from then on.
+            }
+        }
+    }
 })();
 (function() {
     angular.module("clickawiki").factory("classFactory", classFactory);
@@ -69,9 +123,9 @@
 })();
 (function() {
     angular.module("clickawiki").factory("helperFactory", helperFactory);
-    helperFactory.$inject = [];
+    helperFactory.$inject = ["constants"];
 
-    function helperFactory() {
+    function helperFactory(constants) {
         return {
             checkForEnterPress: checkForEnterPress,
             confirmDelete: confirmDelete
@@ -81,8 +135,22 @@
             return evt && evt.keyCode === 13 ? true : false;
         }
 
-        function confirmDelete() {
-            return confirm("Are you sure you want to delete this?");
+        function confirmDelete(msg, partial, callback) {
+            var popup = constants.popUpDeleteSettings;
+            msg = partial ? constants.defaultDeleteMessage + "(" + msg + ")" : msg;
+            msg = msg || constants.defaultDeleteMessage;
+            popup.text = msg;
+            swal(popup, function(isConfirm) {
+                console.log(isConfirm, callback)
+                if (isConfirm) {
+                    swal("Deleted!", "", "success");
+                    callback(true)
+                } else {
+                    swal("Cancelled", "you've stopped it!", "error");
+                    callback()
+                }
+            });
+
         }
     }
 })();
@@ -123,8 +191,9 @@
         /*Set some defaults*/
         vm.headerTitle = constants.headerTitle;
         vm.returnTypes = constants.types;
+        vm.formTitleText = "New";
         vm.allClasses = [];
-        // vm.displayAddNewMethodFlag = false;
+        // vm.displayMethodForm = false;
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
         /*template exposed functions*/
@@ -137,6 +206,7 @@
         //for methods associated with classes
         vm.addNewMethod = addNewMethod;
         vm.removeMethod = removeMethod;
+        vm.updateMethod = updateMethod;
         //for attributes associated with methods
         vm.addMethodAttribute = addMethodAttribute;
         vm.removeMethodAttribute = removeMethodAttribute;
@@ -144,6 +214,7 @@
         vm.checkForEnter = checkForEnter;
         vm.setEditClassName = setEditClassName;
         vm.displayAddNewMethod = displayAddNewMethod;
+        vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
 
         /*Action for db update*/
@@ -163,8 +234,13 @@
         }
 
         function removeClass(id) {
-            if (id && helperFactory.confirmDelete()) {
-                classFactory.removeClass(ref, id);
+            helperFactory.confirmDelete("", false, response)
+
+            function response(confirm) {
+                if (confirm && id) {
+                    classFactory.removeClass(ref, id);
+                    vm.selectedClass = null;
+                }
             }
         }
 
@@ -175,11 +251,12 @@
         }
         //handles when a class is selected
         function selectClass(key, val) {
+            vm.formTitleText = "New";
             vm.selectedClass = {};
             vm.selectedClass.key = key;
             vm.selectedClass.val = val;
-            vm.displayAddNewMethodFlag = false;
             vm.setEditClassName(false);
+            resetMethodForm();
         }
 
         /*controller method functions*/
@@ -187,13 +264,28 @@
             methodFactory.addMethod(ref, vm.selectedClass.key, method);
             vm.method = {};
             vm.method.returnType = 'Return type';
-            vm.displayAddNewMethodFlag = false;
+            vm.displayMethodForm = false;
         }
 
         function removeMethod(key) {
-            if (key && helperFactory.confirmDelete()) {
-                methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+            console.log(key, vm.selectedClass)
+            if (key) {
+                helperFactory.confirmDelete("", "", response)
+
+                function response(confirm) {
+                    if (confirm) {
+                        methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+                    }
+                }
             }
+
+        }
+
+        function updateMethod(method) {
+            vm.displayMethodForm = true;
+            vm.formTitleText = "Edit";
+            vm.method = method;
+            console.log(method);
         }
 
         function addMethodAttribute() {
@@ -219,10 +311,21 @@
         }
 
         function displayAddNewMethod() {
-            vm.displayAddNewMethodFlag = !vm.displayAddNewMethodFlag;
+            vm.displayMethodForm = !vm.displayMethodForm;
         }
 
-        function resetMethodForm() {}
+        function cancelMethodForm() {
+            vm.displayMethodForm = false;
+            vm.formTitleText = "New";
+            resetMethodForm();
+        }
+
+        function resetMethodForm() {
+            vm.method = {};
+            vm.method.returnType = 'Return type';
+            vm.method.attributes = [];
+            vm.displayMethodForm = false;
+        }
     }
 })();
 (function() {
@@ -251,22 +354,24 @@
         return directive;
     }
 })();
-// (function() {
-//     angular.module("clickawiki").filter("methodFilter", methodFilter);
+(function() {
+	angular.module("clickawiki").filter("methodFilter", methodFilter);
 
-//     function methodFilter() {
-//         return function(input, search) {
-//             if (!input) return input;
-//             if (!search) return input;
-//             var expected = ('' + search).toLowerCase();
-//             var result = {};
-//             angular.forEach(input, function(value, key) {
-//                 var actual = ('' + value).toLowerCase();
-//                 if (actual.indexOf(expected) !== -1) {
-//                     result[key] = value;
-//                 }
-//             });
-//             return result;
-//         };
-//     }
-// })();
+	function methodFilter() {
+		console.log("in filter")
+		return function(input, search) {
+			console.log("in filter")
+			if (!input) return input;
+			if (!search) return input;
+			var expected = ('' + search).toLowerCase();
+			var result = {};
+			angular.forEach(input, function(value, key) {
+				var actual = ('' + value).toLowerCase();
+				if (actual.indexOf(expected) !== -1) {
+					result[key] = value;
+				}
+			});
+			return result;
+		};
+	}
+})();
