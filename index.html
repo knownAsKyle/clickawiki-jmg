@@ -130,7 +130,7 @@
                             </div>
                             <div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
                                 <div class="well method">
-                                    <h4 class="method-name">
+                                    <h4 class="method-name" data-toggle="collapse" data-target="#method_{{$index}}">
 										<em>{{method.returnType}}</em> <strong>.{{method.name}}</strong>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
 										<small>
 											<div class="btn-group pull-right" role="group" aria-label="Method operations">
@@ -139,8 +139,8 @@
 											</div>
 										</small>
                                     </h4>
-                                    <hr>
-									<div class="method-body">
+									<div class="method-body collapse" id="method_{{$index}}">
+										<hr>
 										<dl>
 											<dt>Parameters:</dt>
 											<dd class="parameter-output" ng-repeat="(key, attr) in method.attributes track by $index">
