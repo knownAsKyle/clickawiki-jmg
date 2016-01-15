@@ -2,6 +2,7 @@
     angular.module("clickawiki", []);
 })();
 (function() {
+<<<<<<< HEAD
     angular.module("clickawiki").constant("constants", {
         ///firebaseURL: "https://quicktest1.firebaseio.com/wiki",
         firebaseURL: "https://apiwiki.firebaseio.com",
@@ -34,6 +35,28 @@
             inputPlaceholder: "Acess code..."
         }
     });
+=======
+	angular.module("clickawiki").constant("constants", {
+		firebaseURL: "https://quicktest1.firebaseio.com/wiki",
+		headerTitle: "Clickawiki",
+		defaultDeleteMessage: "Are you sure you want to delete this? ",
+		types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String", "Void"],
+		auth: {
+			email: "admin@admin.com"
+		},
+		popUpDeleteSettings: {
+			title: "Are you sure?",
+			text: "",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#5cb85c",
+			confirmButtonText: "Yes, delete it!",
+			cancelButtonText: "No, cancel!",
+			closeOnConfirm: false,
+			closeOnCancel: false
+		}
+	});
+>>>>>>> 10ba47335888891b2e71d5dca791caff073cd655
 })();
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);

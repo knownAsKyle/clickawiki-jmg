@@ -4,7 +4,7 @@
         firebaseURL: "https://apiwiki.firebaseio.com",
         headerTitle: "Clickawiki",
         defaultDeleteMessage: "Are you sure you want to delete this? ",
-        types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String"],
+        types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String","Void"],
         auth: {
             email: "admin@admin.com"
         },
