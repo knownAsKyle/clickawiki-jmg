@@ -51,7 +51,7 @@
                                 <div class="col-md-4">
                                     <div class="btn-group pull-right" role="group" aria-label="Class operations">
                                         <div class="dropdown">
-                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="vm.editClass">
+                                            <button class="btn btn-xs btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="vm.editClass">
                                             <span class="glyphicon glyphicon-cog"></span>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
@@ -65,7 +65,7 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <div class="well clearfix" ng-show="vm.displayMethodForm">
+                            <div class="well clearfix add-edit-method" ng-show="vm.displayMethodForm">
                                 <form class="form-horizontal" role="form">
                                     <h3>{{vm.formTitleText}} method:</h3>
                                     <input type="text" ng-model="vm.method.name" class="form-control" id="new-method-name" placeholder="Method name"/><br>
@@ -128,34 +128,37 @@
                             <div class="top-buffer bottom-buffer">
                                 <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
                             </div>
-                            <div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
-                                <div class="well method">
-                                    <h4 class="method-name" data-toggle="collapse" data-target="#method_{{$index}}">
-										<em>{{method.returnType}}</em> <strong>.{{method.name}}</strong>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
-										<small>
-											<div class="btn-group pull-right" role="group" aria-label="Method operations">
-												<button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.editMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
-												<button type="button" class="btn btn-sm btn-default" title="Remove method" ng-click="vm.removeMethod(key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-											</div>
-										</small>
-                                    </h4>
-									<div class="method-body collapse" id="method_{{$index}}">
-										<hr>
-										<dl>
-											<dt>Parameters:</dt>
-											<dd class="parameter-output" ng-repeat="(key, attr) in method.attributes track by $index">
-												<span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span> - {{attr.description}}
-											</dd>
-											<dt>Returns:</dt>
-											<dd class="returns-statement">
-												<span class="method-return-type">{{method.returnType}}</span> - <span class="method-return-description">{{method.returnDescription}}</span>
-											</dd>
-											<dt>Notes:</dt>
-											<dd>
-												{{method.notes}}
-											</dd>
-										</dl>
-                                    </div>
+                            <div class="methods panel-group">
+                                <div class="method panel panel-default" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
+									<div class="panel-heading" data-toggle="collapse" data-target="#method_{{$index}}_body">
+										<h4>
+											<span class="method-return-type">{{method.returnType}}</span> <span class="method-name">.{{method.name}}</span>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
+											<small>
+												<div class="btn-group pull-right" role="group" aria-label="Method operations">
+													<button type="button" class="btn btn-xs btn-default" title="Edit method" ng-click="vm.editMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+													<button type="button" class="btn btn-xs btn-default" title="Remove method" ng-click="vm.removeMethod(key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+												</div>
+											</small>
+										</h4>
+									</div>
+									<div id="method_{{$index}}_body" class="panel-collapse collapse">
+										<div class="method-body panel-body">
+											<dl>
+												<dt ng-if="method.attributes.length > 0">Parameters:</dt>
+												<dd class="parameter-output" ng-repeat="(key, attr) in method.attributes track by $index">
+													<span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span> - {{attr.description}}
+												</dd>
+												<dt>Returns:</dt>
+												<dd class="returns-statement">
+													<span class="method-return-type">{{method.returnType}}</span> - <span class="method-return-description">{{method.returnDescription}}</span>
+												</dd>
+												<dt ng-if="method.notes.length > 0">Notes:</dt>
+												<dd>
+													{{method.notes}}
+												</dd>
+											</dl>
+										</div>
+									</div>
                                 </div>
                             </div>
                         </div>

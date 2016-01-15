@@ -37,6 +37,30 @@
 	margin-bottom: 20px;
 }
 
+dl {
+	margin: 0;
+}
+
+dd {
+	margin-left: 20px;
+}
+
+.method-return-type {
+	font-weight: bold;
+	font-style: italic;
+	color: #3c763d;
+}
+
+.parameter-type {
+	font-weight: bold;
+	font-style: italic;
+	color: #337ab7;
+}
+
+.method-name, .parameter-name {
+	color: #d9534f;
+	font-weight: bold;
+}
 
 .reviewer-name{
   margin-right:10px;
