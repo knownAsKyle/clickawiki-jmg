@@ -76,8 +76,8 @@
             vm.displayAddNewMethodFlag = false;
         }
 
-        function removeMethod(key) {
-            if (key && helperFactory.confirmDelete()) {
+        function removeMethod(key, name) {
+            if (key && helperFactory.confirmDelete(name, true)) {
                 methodFactory.removeMethod(ref, vm.selectedClass.key, key);
             }
         }
