@@ -2,15 +2,26 @@
     angular.module("clickawiki", []);
 })();
 (function() {
-    angular.module("clickawiki").constant("constants", {
-        firebaseURL: "https://quicktest1.firebaseio.com/wiki",
-        headerTitle: "Clickawiki",
-        defaultDeleteMessage: "Are you sure you want to delete this? ",
-        types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String"],
-        auth: {
-            email: "admin@admin.com"
-        }
-    });
+	angular.module("clickawiki").constant("constants", {
+		firebaseURL: "https://quicktest1.firebaseio.com/wiki",
+		headerTitle: "Clickawiki",
+		defaultDeleteMessage: "Are you sure you want to delete this? ",
+		types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String"],
+		auth: {
+			email: "admin@admin.com"
+		},
+		popUpDeleteSettings: {
+			title: "Are you sure?",
+			text: "",
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#5cb85c",
+			confirmButtonText: "Yes, delete it!",
+			cancelButtonText: "No, cancel!",
+			closeOnConfirm: false,
+			closeOnCancel: false
+		}
+	});
 })();
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);
@@ -124,10 +135,22 @@
             return evt && evt.keyCode === 13 ? true : false;
         }
 
-        function confirmDelete(msg, partial) {
+        function confirmDelete(msg, partial, callback) {
+            var popup = constants.popUpDeleteSettings;
             msg = partial ? constants.defaultDeleteMessage + "(" + msg + ")" : msg;
             msg = msg || constants.defaultDeleteMessage;
-            return confirm(msg);
+            popup.text = msg;
+            swal(popup, function(isConfirm) {
+                console.log(isConfirm, callback)
+                if (isConfirm) {
+                    swal("Deleted!", "", "success");
+                    callback(true)
+                } else {
+                    swal("Cancelled", "you've stopped it!", "error");
+                    callback()
+                }
+            });
+
         }
     }
 })();
@@ -211,10 +234,13 @@
         }
 
         function removeClass(id) {
-            if (id && helperFactory.confirmDelete()) {
-                classFactory.removeClass(ref, id);
-                vm.selectedClass = null;
-                console.log("removeClass() ", vm.selectedClass);
+            helperFactory.confirmDelete("", false, response)
+
+            function response(confirm) {
+                if (confirm && id) {
+                    classFactory.removeClass(ref, id);
+                    vm.selectedClass = null;
+                }
             }
         }
 
@@ -242,9 +268,17 @@
         }
 
         function removeMethod(key) {
-            if (key && helperFactory.confirmDelete(vm.selectedClass.val.methods[key].name, true)) {
-                methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+            console.log(key, vm.selectedClass)
+            if (key) {
+                helperFactory.confirmDelete("", "", response)
+
+                function response(confirm) {
+                    if (confirm) {
+                        methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+                    }
+                }
             }
+
         }
 
         function updateMethod(method) {
@@ -320,22 +354,24 @@
         return directive;
     }
 })();
-// (function() {
-//     angular.module("clickawiki").filter("methodFilter", methodFilter);
+(function() {
+	angular.module("clickawiki").filter("methodFilter", methodFilter);
 
-//     function methodFilter() {
-//         return function(input, search) {
-//             if (!input) return input;
-//             if (!search) return input;
-//             var expected = ('' + search).toLowerCase();
-//             var result = {};
-//             angular.forEach(input, function(value, key) {
-//                 var actual = ('' + value).toLowerCase();
-//                 if (actual.indexOf(expected) !== -1) {
-//                     result[key] = value;
-//                 }
-//             });
-//             return result;
-//         };
-//     }
-// })();
+	function methodFilter() {
+		console.log("in filter")
+		return function(input, search) {
+			console.log("in filter")
+			if (!input) return input;
+			if (!search) return input;
+			var expected = ('' + search).toLowerCase();
+			var result = {};
+			angular.forEach(input, function(value, key) {
+				var actual = ('' + value).toLowerCase();
+				if (actual.indexOf(expected) !== -1) {
+					result[key] = value;
+				}
+			});
+			return result;
+		};
+	}
+})();

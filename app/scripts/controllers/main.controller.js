@@ -52,10 +52,13 @@
         }
 
         function removeClass(id) {
-            if (id && helperFactory.confirmDelete()) {
-                classFactory.removeClass(ref, id);
-                vm.selectedClass = null;
-                console.log("removeClass() ", vm.selectedClass);
+            helperFactory.confirmDelete("", false, response)
+
+            function response(confirm) {
+                if (confirm && id) {
+                    classFactory.removeClass(ref, id);
+                    vm.selectedClass = null;
+                }
             }
         }
 
@@ -83,9 +86,17 @@
         }
 
         function removeMethod(key) {
-            if (key && helperFactory.confirmDelete(vm.selectedClass.val.methods[key].name, true)) {
-                methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+            console.log(key, vm.selectedClass)
+            if (key) {
+                helperFactory.confirmDelete("", "", response)
+
+                function response(confirm) {
+                    if (confirm) {
+                        methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+                    }
+                }
             }
+
         }
 
         function updateMethod(method) {

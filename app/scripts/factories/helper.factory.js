@@ -12,10 +12,22 @@
             return evt && evt.keyCode === 13 ? true : false;
         }
 
-        function confirmDelete(msg, partial) {
+        function confirmDelete(msg, partial, callback) {
+            var popup = constants.popUpDeleteSettings;
             msg = partial ? constants.defaultDeleteMessage + "(" + msg + ")" : msg;
             msg = msg || constants.defaultDeleteMessage;
-            return confirm(msg);
+            popup.text = msg;
+            swal(popup, function(isConfirm) {
+                console.log(isConfirm, callback)
+                if (isConfirm) {
+                    swal("Deleted!", "", "success");
+                    callback(true)
+                } else {
+                    swal("Cancelled", "you've stopped it!", "error");
+                    callback()
+                }
+            });
+
         }
     }
 })();
