@@ -104,6 +104,8 @@
             vm.selectedClass.val = val;
             vm.setEditClassName(false);
             resetMethodForm();
+            angular.element(document).find(".panel-collapse").removeClass("in")
+            console.log()
         }
 
         /*controller method functions*/
