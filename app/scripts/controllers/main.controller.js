@@ -32,6 +32,8 @@
         vm.removeClass = removeClass;
         vm.updateClass = updateClass;
         vm.selectClass = selectClass;
+		//search
+		vm.search = search;
         //for methods associated with classes
         vm.addNewMethod = addNewMethod;
         vm.removeMethod = removeMethod;
@@ -87,6 +89,13 @@
                 classFactory.updateClass(ref, classObj.key, classObj.val);
             }
         }
+		
+		//search
+		function search(searchTerm) {
+			// TODO: All the hard stuff...
+			console.log("Searching for '" + searchTerm + "'");
+		}
+		
         //handles when a class is selected
         function selectClass(key, val) {
             vm.formTitleText = "New";

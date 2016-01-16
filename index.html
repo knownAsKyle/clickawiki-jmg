@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="assets/css/user.css">
     </head>
     <body ng-app="clickawiki" ng-controller="mainController as vm" >
-        <cw-header header-title="{{vm.headerTitle}}" ng-click="vm.loginPrompt()"></cw-header>
+        <cw-header header-title="{{vm.headerTitle}}"></cw-header>
         <div class="container" ng-cloak>
             <div class="row">
                 <div class="col-md-3 left-col">
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="col-md-9 right-col">
-                    <h4>Select a class on the left to view/edit its properties.</h4>
+                    <h4>Select a class to view/edit its properties.</h4>
                     <div class="panel panel-primary" ng-show="vm.selectedClass">
                         <div class="panel-heading clearfix">
                             <div class="row">
@@ -130,7 +130,7 @@
                             </div>
                             <div class="methods panel-group">
                                 <div class="method panel panel-default" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
-									<div class="panel-heading" data-toggle="collapse" data-target="#method_{{$index}}_body">
+									<div class="panel-heading" data-toggle="collapse" data-target="#method_{{key}}_body">
 										<h4>
 											<span class="method-return-type">{{method.returnType}}</span> <span class="method-name">.{{method.name}}</span>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
 											<small>
@@ -141,7 +141,7 @@
 											</small>
 										</h4>
 									</div>
-									<div id="method_{{$index}}_body" class="panel-collapse collapse">
+									<div id="method_{{key}}_body" class="panel-collapse collapse">
 										<div class="method-body panel-body">
 											<dl>
 												<dt ng-if="method.attributes.length > 0">Parameters:</dt>
