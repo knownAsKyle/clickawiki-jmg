@@ -21,7 +21,7 @@
             }
         });
 
-        if (localStorage.getItem("cw_token")) {
+        if (localStorage && localStorage.getItem("cw_token")) {
             var token = localStorage.getItem("cw_token");
             authFactory.login(ref, null, null, token);
         }
@@ -32,8 +32,8 @@
         vm.removeClass = removeClass;
         vm.updateClass = updateClass;
         vm.selectClass = selectClass;
-		//search
-		vm.search = search;
+        //search
+        vm.search = search;
         //for methods associated with classes
         vm.addNewMethod = addNewMethod;
         vm.removeMethod = removeMethod;
@@ -53,7 +53,9 @@
 
 
 
-        function loginPrompt() {
+        function loginPrompt(ev) {
+            console.log("Sadfasd")
+            ev.preventDefault();
             swal(constants.loginPromptSettings, authFactory.loginPrompt);
         }
 
@@ -89,13 +91,13 @@
                 classFactory.updateClass(ref, classObj.key, classObj.val);
             }
         }
-		
-		//search
-		function search(searchTerm) {
-			// TODO: All the hard stuff...
-			console.log("Searching for '" + searchTerm + "'");
-		}
-		
+
+        //search
+        function search(searchTerm) {
+            // TODO: All the hard stuff...
+            console.log("Searching for '" + searchTerm + "'");
+        }
+
         //handles when a class is selected
         function selectClass(key, val) {
             vm.formTitleText = "New";

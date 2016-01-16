@@ -1,5 +1,5 @@
 (function() {
-	angular.module("clickawiki", []);
+    angular.module("clickawiki", []);
 })();
 (function() {
 	angular.module("clickawiki").constant("constants", {
@@ -36,354 +36,356 @@
 	});
 })();
 (function() {
-	angular.module("clickawiki").factory("authFactory", authFactory);
-	authFactory.$inject = ["firebaseFactory", "constants"];
+    angular.module("clickawiki").factory("authFactory", authFactory);
+    authFactory.$inject = ["firebaseFactory", "constants"];
 
-	function authFactory(firebaseFactory, constants) {
-		return {
-			loginPrompt: loginPrompt,
-			getAuth: getAuth,
-			logout: logout,
-			login: login
-		};
+    function authFactory(firebaseFactory, constants) {
+        return {
+            loginPrompt: loginPrompt,
+            getAuth: getAuth,
+            logout: logout,
+            login: login
+        };
 
-		function getAuth() {}
+        function getAuth() {}
 
-		function logout(ref) {
-			return ref.unauth();
-		}
+        function logout(ref) {
+            return ref.unauth();
+        }
 
-		function loginPrompt(inputValue) {
-			if (inputValue === false) return false;
-			if (inputValue === "") {
-				swal.showInputError("You need to enter your access code!");
-				return false;
-			}
-			swal.close();
-			login(firebaseFactory.getRef(), null, inputValue)
-			console.log("now loging in with access code: ", inputValue);
-		}
+        function loginPrompt(inputValue) {
+            if (inputValue === false) return false;
+            if (inputValue === "") {
+                swal.showInputError("You need to enter your access code!");
+                return false;
+            }
+            swal.close();
+            login(firebaseFactory.getRef(), null, inputValue)
+            console.log("now loging in with access code: ", inputValue);
+        }
 
 
-		function login(ref, u, p, token) {
-			if (!token) {
-				u = u || constants.auth.email;
-				var auth = {};
-				auth.email = u;
-				auth.password = p;
-				ref.authWithPassword(auth, loginResponse);
-			} else {
-				ref.authWithCustomToken(token, loginResponse);
-			}
+        function login(ref, u, p, token) {
+            if (!token) {
+                u = u || constants.auth.email;
+                var auth = {};
+                auth.email = u;
+                auth.password = p;
+                ref.authWithPassword(auth, loginResponse);
+            } else {
+                ref.authWithCustomToken(token, loginResponse);
+            }
 
-		}
+        }
 
-		function loginResponse(err, authData) {
-			if (err) {
-				swal("Login Failure", err, "error");
-				console.log(err);
-			} else {
-				//set localstorage with session id to use auto login from then on.
-			}
-		}
-	}
+        function loginResponse(err, authData) {
+            if (err) {
+            	swal("Login Failure", err, "error");
+                console.log(err);
+            } else {
+                //set localstorage with session id to use auto login from then on.
+            }
+        }
+    }
 })();
 (function() {
-	angular.module("clickawiki").factory("classFactory", classFactory);
-	classFactory.$inject = [];
+    angular.module("clickawiki").factory("classFactory", classFactory);
+    classFactory.$inject = [];
 
-	function classFactory() {
-		return {
-			addClass: addClass,
-			removeClass: removeClass,
-			updateClass: updateClass,
-			makeNewClass: makeNewClass
-		};
+    function classFactory() {
+        return {
+            addClass: addClass,
+            removeClass: removeClass,
+            updateClass: updateClass,
+            makeNewClass: makeNewClass
+        };
 
-		function makeNewClass(className) {
-			return {
-				name: className
-			};
-		}
+        function makeNewClass(className) {
+            return {
+                name: className
+            };
+        }
 
-		function addClass(ref, className) {
-			ref.push(makeNewClass(className), handleReturn);
-		}
+        function addClass(ref, className) {
+            ref.push(makeNewClass(className), handleReturn);
+        }
 
-		function removeClass(ref, id) {
-			ref.child(id).remove(handleReturn);
-		}
+        function removeClass(ref, id) {
+            ref.child(id).remove(handleReturn);
+        }
 
-		function updateClass(ref, id, val) {
-			console.dir(val);
-			ref.child(id).update(val, handleReturn);
-		}
+        function updateClass(ref, id, val) {
+            console.dir(val);
+            ref.child(id).update(val, handleReturn);
+        }
 
-		function handleReturn(err) {
-			return err ? console.log(err) : true;
-		}
-	}
+        function handleReturn(err) {
+            return err ? console.log(err) : true;
+        }
+    }
 })();
 (function() {
-	angular.module("clickawiki").factory("firebaseFactory", firebaseFactory);
-	firebaseFactory.$inject = ["constants"];
+    angular.module("clickawiki").factory("firebaseFactory", firebaseFactory);
+    firebaseFactory.$inject = ["constants"];
 
-	function firebaseFactory(constants) {
-		var ref = new Firebase(constants.firebaseURL);
+    function firebaseFactory(constants) {
+        var ref = new Firebase(constants.firebaseURL);
 
-		return {
-			getRef: getRef,
-			update: update
-		};
+        return {
+            getRef: getRef,
+            update: update
+        };
 
-		function getRef() {
-			return ref;
-		}
+        function getRef() {
+            return ref;
+        }
 
-		function update(data) {
-			ref.set(data, function(err) {
-				return err || "complete";
-			});
-		}
-	}
+        function update(data) {
+            ref.set(data, function(err) {
+                return err || "complete";
+            });
+        }
+    }
 })();
 (function() {
-	angular.module("clickawiki").factory("helperFactory", helperFactory);
-	helperFactory.$inject = ["constants"];
+    angular.module("clickawiki").factory("helperFactory", helperFactory);
+    helperFactory.$inject = ["constants"];
 
-	function helperFactory(constants) {
-		return {
-			checkForEnterPress: checkForEnterPress,
-			confirmDelete: confirmDelete
-		};
+    function helperFactory(constants) {
+        return {
+            checkForEnterPress: checkForEnterPress,
+            confirmDelete: confirmDelete
+        };
 
-		function checkForEnterPress(evt) {
-			return evt && evt.keyCode === 13 ? true : false;
-		}
+        function checkForEnterPress(evt) {
+            return evt && evt.keyCode === 13 ? true : false;
+        }
 
-		function confirmDelete(msg, partial, callback) {
-			var popup = constants.popUpDeleteSettings;
-			msg = partial ? constants.defaultDeleteMessage + "(" + msg + ")" : msg;
-			msg = msg || constants.defaultDeleteMessage;
-			popup.text = msg;
-			swal(popup, function(isConfirm) {
-				console.log(isConfirm, callback)
-				if (isConfirm) {
-					swal("Deleted!", "", "success");
-					callback(true)
-				} else {
-					swal("Cancelled", "you've stopped it!", "error");
-					callback()
-				}
-			});
+        function confirmDelete(msg, partial, callback) {
+            var popup = constants.popUpDeleteSettings;
+            msg = partial ? constants.defaultDeleteMessage + "(" + msg + ")" : msg;
+            msg = msg || constants.defaultDeleteMessage;
+            popup.text = msg;
+            swal(popup, function(isConfirm) {
+                console.log(isConfirm, callback)
+                if (isConfirm) {
+                    swal("Deleted!", "", "success");
+                    callback(true)
+                } else {
+                    swal("Cancelled", "you've stopped it!", "error");
+                    callback()
+                }
+            });
 
-		}
-	}
+        }
+    }
 })();
 (function() {
-	angular.module("clickawiki").factory("methodFactory", methodFactory);
-	methodFactory.$inject = [];
+    angular.module("clickawiki").factory("methodFactory", methodFactory);
+    methodFactory.$inject = [];
 
-	function methodFactory() {
-		return {
-			addMethod: addMethod,
-			removeMethod: removeMethod,
-			updateMethod: updateMethod
-		};
+    function methodFactory() {
+        return {
+            addMethod: addMethod,
+            removeMethod: removeMethod,
+            updateMethod: updateMethod
+        };
 
-		function addMethod(ref, key, val) {
-			ref.child(key).child("methods").push(val, handleReturn);
-		}
+        function addMethod(ref, key, val) {
+            ref.child(key).child("methods").push(val, handleReturn);
+        }
 
-		function removeMethod(ref, classKey, key) {
-			ref.child(classKey).child("methods").child(key).remove(handleReturn);
-		}
+        function removeMethod(ref, classKey, key) {
+            ref.child(classKey).child("methods").child(key).remove(handleReturn);
+        }
 
-		function updateMethod() {}
+        function updateMethod() {}
 
-		function handleReturn(err) {
-			return err ? console.log(err) : true;
-		}
-	}
+        function handleReturn(err) {
+            return err ? console.log(err) : true;
+        }
+    }
 })();
 (function() {
-	angular.module("clickawiki").controller("mainController", mainController);
-	mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
+    angular.module("clickawiki").controller("mainController", mainController);
+    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
 
-	function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
-		var vm = this;
-		/*Set db reference*/
-		var ref = firebaseFactory.getRef();
-		/*Set some defaults*/
-		vm.headerTitle = constants.headerTitle;
-		vm.returnTypes = constants.types;
-		vm.formTitleText = "New";
-		vm.allClasses = [];
-		// vm.displayMethodForm = false;
-		/*Set listener for db changes*/
-		ref.on("value", handleDataUpdate);
-		ref.onAuth(function(auth) {
-			console.log("checking auth: ", auth)
-			if (localStorage && auth) {
-				localStorage.setItem("cw_token", auth.token);
-			}
-		});
+    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
+        var vm = this;
+        /*Set db reference*/
+        var ref = firebaseFactory.getRef();
+        /*Set some defaults*/
+        vm.headerTitle = constants.headerTitle;
+        vm.returnTypes = constants.types;
+        vm.formTitleText = "New";
+        vm.allClasses = [];
+        // vm.displayMethodForm = false;
+        /*Set listener for db changes*/
+        ref.on("value", handleDataUpdate);
+        ref.onAuth(function(auth) {
+            console.log("checking auth: ", auth)
+            if (localStorage && auth) {
+                localStorage.setItem("cw_token", auth.token);
+            }
+        });
 
-		if (localStorage.getItem("cw_token")) {
-			var token = localStorage.getItem("cw_token");
-			authFactory.login(ref, null, null, token);
-		}
-		/*template exposed functions*/
+        if (localStorage && localStorage.getItem("cw_token")) {
+            var token = localStorage.getItem("cw_token");
+            authFactory.login(ref, null, null, token);
+        }
+        /*template exposed functions*/
 
-		//for classes
-		vm.addNewClass = addNewClass;
-		vm.removeClass = removeClass;
-		vm.updateClass = updateClass;
-		vm.selectClass = selectClass;
-		//search
-		vm.search = search;
-		//for methods associated with classes
-		vm.addNewMethod = addNewMethod;
-		vm.removeMethod = removeMethod;
-		vm.updateMethod = updateMethod;
-		//for attributes associated with methods
-		vm.addMethodAttribute = addMethodAttribute;
-		vm.removeMethodAttribute = removeMethodAttribute;
-		//extra stuff
-		vm.checkForEnter = checkForEnter;
-		vm.setEditClassName = setEditClassName;
-		vm.displayAddNewMethod = displayAddNewMethod;
-		vm.cancelMethodForm = cancelMethodForm;
-		vm.resetMethodForm = resetMethodForm;
-
-
-		vm.loginPrompt = loginPrompt;
+        //for classes
+        vm.addNewClass = addNewClass;
+        vm.removeClass = removeClass;
+        vm.updateClass = updateClass;
+        vm.selectClass = selectClass;
+        //search
+        vm.search = search;
+        //for methods associated with classes
+        vm.addNewMethod = addNewMethod;
+        vm.removeMethod = removeMethod;
+        vm.updateMethod = updateMethod;
+        //for attributes associated with methods
+        vm.addMethodAttribute = addMethodAttribute;
+        vm.removeMethodAttribute = removeMethodAttribute;
+        //extra stuff
+        vm.checkForEnter = checkForEnter;
+        vm.setEditClassName = setEditClassName;
+        vm.displayAddNewMethod = displayAddNewMethod;
+        vm.cancelMethodForm = cancelMethodForm;
+        vm.resetMethodForm = resetMethodForm;
 
 
+        vm.loginPrompt = loginPrompt;
 
-		function loginPrompt() {
-			swal(constants.loginPromptSettings, authFactory.loginPrompt);
-		}
 
-		/*Action for db update*/
-		function handleDataUpdate(snap) {
-			$timeout(function() {
-				console.log("handleDataUpdate() ", snap.val());
-				vm.allClasses = snap.val() || {};
-			});
-		}
 
-		/*controller class functions*/
-		function addNewClass(className) {
-			if (className) {
-				classFactory.addClass(ref, className);
-				vm.newClassName = "";
-			}
-		}
+        function loginPrompt(ev) {
+            console.log("Sadfasd")
+            ev.preventDefault();
+            swal(constants.loginPromptSettings, authFactory.loginPrompt);
+        }
 
-		function removeClass(id) {
-			helperFactory.confirmDelete("", false, response)
+        /*Action for db update*/
+        function handleDataUpdate(snap) {
+            $timeout(function() {
+                console.log("handleDataUpdate() ", snap.val());
+                vm.allClasses = snap.val() || {};
+            });
+        }
 
-			function response(confirm) {
-				if (confirm && id) {
-					classFactory.removeClass(ref, id);
-					vm.selectedClass = null;
-				}
-			}
-		}
+        /*controller class functions*/
+        function addNewClass(className) {
+            if (className) {
+                classFactory.addClass(ref, className);
+                vm.newClassName = "";
+            }
+        }
 
-		function updateClass(classObj) {
-			if (classObj && classObj.val.name.length > 0) {
-				classFactory.updateClass(ref, classObj.key, classObj.val);
-			}
-		}
-	
-		//search
-		function search(searchTerm) {
-			// TODO: All the hard stuff...
-			console.log("Searching for '" + searchTerm + "'")
-		}
-		
-		//handles when a class is selected
-		function selectClass(key, val) {
-			vm.formTitleText = "New";
-			vm.selectedClass = {};
-			vm.selectedClass.key = key;
-			vm.selectedClass.val = val;
-			vm.setEditClassName(false);
-			resetMethodForm();
-			angular.element(document).find(".panel-collapse").removeClass("in")
-			console.log()
-		}
+        function removeClass(id) {
+            helperFactory.confirmDelete("", false, response)
 
-		/*controller method functions*/
-		function addNewMethod(method) {
-			methodFactory.addMethod(ref, vm.selectedClass.key, method);
-			vm.method = {};
-			vm.method.returnType = 'Return type';
-			vm.displayMethodForm = false;
-		}
+            function response(confirm) {
+                if (confirm && id) {
+                    classFactory.removeClass(ref, id);
+                    vm.selectedClass = null;
+                }
+            }
+        }
 
-		function removeMethod(key) {
-			console.log(key, vm.selectedClass)
-			if (key) {
-				helperFactory.confirmDelete("", "", response)
+        function updateClass(classObj) {
+            if (classObj && classObj.val.name.length > 0) {
+                classFactory.updateClass(ref, classObj.key, classObj.val);
+            }
+        }
 
-				function response(confirm) {
-					if (confirm) {
-						methodFactory.removeMethod(ref, vm.selectedClass.key, key);
-					}
-				}
-			}
+        //search
+        function search(searchTerm) {
+            // TODO: All the hard stuff...
+            console.log("Searching for '" + searchTerm + "'");
+        }
 
-		}
+        //handles when a class is selected
+        function selectClass(key, val) {
+            vm.formTitleText = "New";
+            vm.selectedClass = {};
+            vm.selectedClass.key = key;
+            vm.selectedClass.val = val;
+            vm.setEditClassName(false);
+            resetMethodForm();
+            angular.element(document).find(".panel-collapse").removeClass("in")
+            console.log()
+        }
 
-		function updateMethod(method) {
-			vm.displayMethodForm = true;
-			vm.formTitleText = "Edit";
-			vm.method = method;
-			console.log(method);
-		}
+        /*controller method functions*/
+        function addNewMethod(method) {
+            methodFactory.addMethod(ref, vm.selectedClass.key, method);
+            vm.method = {};
+            vm.method.returnType = 'Return type';
+            vm.displayMethodForm = false;
+        }
 
-		function addMethodAttribute() {
-			vm.method.attributes = vm.method.attributes || [];
-			vm.method.attributes.push({});
-		}
+        function removeMethod(key) {
+            console.log(key, vm.selectedClass)
+            if (key) {
+                helperFactory.confirmDelete("", "", response)
 
-		function removeMethodAttribute(ev, index, attr) {
-			ev.preventDefault();
-			if (vm.method.attributes) {
-				vm.method.attributes.splice(index, 1);
-			}
-		}
+                function response(confirm) {
+                    if (confirm) {
+                        methodFactory.removeMethod(ref, vm.selectedClass.key, key);
+                    }
+                }
+            }
 
-		/*Extra stuff*/
-		//handle enter press
-		function checkForEnter(evt, val, callback) {
-			return helperFactory.checkForEnterPress(evt) ? callback(val) : false;
-		}
-		//value to show/hide edit class name feature
-		function setEditClassName(bool) {
-			return (vm.editClass = bool);
-		}
+        }
 
-		function displayAddNewMethod() {
-			vm.displayMethodForm = !vm.displayMethodForm;
-		}
+        function updateMethod(method) {
+            vm.displayMethodForm = true;
+            vm.formTitleText = "Edit";
+            vm.method = method;
+            console.log(method);
+        }
 
-		function cancelMethodForm() {
-			vm.displayMethodForm = false;
-			vm.formTitleText = "New";
-			resetMethodForm();
-		}
+        function addMethodAttribute() {
+            vm.method.attributes = vm.method.attributes || [];
+            vm.method.attributes.push({});
+        }
 
-		function resetMethodForm() {
-			vm.method = {};
-			vm.method.returnType = 'Return type';
-			vm.method.attributes = [];
-			vm.displayMethodForm = false;
-		}
-	}
+        function removeMethodAttribute(ev, index, attr) {
+            ev.preventDefault();
+            if (vm.method.attributes) {
+                vm.method.attributes.splice(index, 1);
+            }
+        }
+
+        /*Extra stuff*/
+        //handle enter press
+        function checkForEnter(evt, val, callback) {
+            return helperFactory.checkForEnterPress(evt) ? callback(val) : false;
+        }
+        //value to show/hide edit class name feature
+        function setEditClassName(bool) {
+            return (vm.editClass = bool);
+        }
+
+        function displayAddNewMethod() {
+            vm.displayMethodForm = !vm.displayMethodForm;
+        }
+
+        function cancelMethodForm() {
+            vm.displayMethodForm = false;
+            vm.formTitleText = "New";
+            resetMethodForm();
+        }
+
+        function resetMethodForm() {
+            vm.method = {};
+            vm.method.returnType = 'Return type';
+            vm.method.attributes = [];
+            vm.displayMethodForm = false;
+        }
+    }
 })();
 (function() {
 	angular.module("clickawiki").directive("cwHeader", cwHeader);
@@ -400,7 +402,7 @@
 			'				<span class="icon-bar"></span>',
 			'				<span class="icon-bar"></span>',
 			'			</button>',
-			'			<a class="navbar-brand navbar-link" href="#">{{headerTitle}}</a>',
+			'           <a class="navbar-brand navbar-link" href="#">{{vm.headerTitle}}</a>',
 			'		</div>',
 			'		<div class="collapse navbar-collapse" id="navcol-1">',
 			'			<form class="navbar-form navbar-left" role="search">',
@@ -408,13 +410,13 @@
 			'					<div class="input-group">',
 			'						<input type="text" class="form-control" placeholder="Search" ng-model="vm.searchTerm">',
 			'						<span class="input-group-btn">',
-			'							<button class="btn btn-default" type="button" ng-click="vm.search(vm.searchTerm)"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>',
+			'							<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true" ng-click="vm.search(vm.searchTerm)"></span></button>',
 			'						</span>',
 			'					</div>',
 			'				</div>',
 			'			</form>',
 			'			<ul class="nav navbar-nav">',
-			'				<li><a href="#" ng-click="vm.loginPrompt()">Log In</a></li>',
+			'				<li><a href="#" ng-click="vm.loginPrompt($event)">Log In</a></li>',
 			'				<li><a href="#">Log Out</a></li>',
 			'			</ul>',
 			'		</div>',
@@ -423,12 +425,16 @@
 		].join('');
 		var directive = {
 			restrict: "EA",
-			template: template,
 			transclude: true,
-			scope: {
-				headerTitle: "@"
-			}
 		};
+		var templateUrl = null
+		//templateUrl = "cwHeader.directive.html"
+		if (templateUrl) {
+			directive.templateUrl = templateUrl
+		} else {
+			directive.template = template;
+		}
+
 		return directive;
 	}
 })();

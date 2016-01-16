@@ -13,7 +13,7 @@
 			'				<span class="icon-bar"></span>',
 			'				<span class="icon-bar"></span>',
 			'			</button>',
-			'			<a class="navbar-brand navbar-link" href="#">{{headerTitle}}</a>',
+			'           <a class="navbar-brand navbar-link" href="#">{{vm.headerTitle}}</a>',
 			'		</div>',
 			'		<div class="collapse navbar-collapse" id="navcol-1">',
 			'			<form class="navbar-form navbar-left" role="search">',
@@ -27,7 +27,7 @@
 			'				</div>',
 			'			</form>',
 			'			<ul class="nav navbar-nav">',
-			'				<li><a href="#" ng-click="vm.loginPrompt()">Log In</a></li>',
+			'				<li><a href="#" ng-click="vm.loginPrompt($event)">Log In</a></li>',
 			'				<li><a href="#">Log Out</a></li>',
 			'			</ul>',
 			'		</div>',
@@ -36,12 +36,16 @@
 		].join('');
 		var directive = {
 			restrict: "EA",
-			template: template,
 			transclude: true,
-			scope: {
-				headerTitle: "@"
-			}
 		};
+		var templateUrl = null
+		//templateUrl = "cwHeader.directive.html"
+		if (templateUrl) {
+			directive.templateUrl = templateUrl
+		} else {
+			directive.template = template;
+		}
+
 		return directive;
 	}
 })();
