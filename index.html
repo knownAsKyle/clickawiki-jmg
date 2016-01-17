@@ -89,7 +89,7 @@
                                                     <div class="col-sm-3 ">
                                                         <select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
                                                             <option selected disabled>Type</option>
-                                                            <option ng-repeat="type in vm.returnTypes track by $index" value="{{type}}">{{type}}</option>
+                                                            <option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-2">
