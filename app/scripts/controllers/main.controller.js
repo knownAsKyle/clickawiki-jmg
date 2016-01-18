@@ -18,7 +18,6 @@
         ref.on("value", handleDataUpdate);
         ref.onAuth(function(auth) {
             $timeout(function() {
-                console.log("checking auth: ", auth);
                 vm.isLoggedIn = auth ? true : false;
                 if (localStorage && auth) {
                     localStorage.setItem("cw_token", auth.token);
@@ -71,7 +70,6 @@
         /*Action for db update*/
         function handleDataUpdate(snap) {
             $timeout(function() {
-                console.log("handleDataUpdate() ", snap.val());
                 vm.allClasses = snap.val() || {};
             });
         }
@@ -121,7 +119,6 @@
 
         /*controller method functions*/
         function addNewMethod(method) {
-            console.log("editmode: ", vm.editModeActive)
             if (vm.editModeActive) {
                 vm.editModeActive = false;
                 methodFactory.updateMethod(ref, vm.selectedClass.key, vm.editMethodKey, method);
@@ -135,10 +132,8 @@
 
         function removeMethod(key, ev) {
             ev.stopPropagation();
-            console.log(key, vm.selectedClass);
             if (key) {
                 helperFactory.confirmDelete("", "", response);
-
                 function response(confirm) {
                     if (confirm) {
                         methodFactory.removeMethod(ref, vm.selectedClass.key, key);
@@ -148,14 +143,12 @@
         }
 
         function updateMethod(key, method, ev) {
-            console.dir(method)
             ev.stopPropagation();
             vm.displayMethodForm = true;
             vm.formTitleText = "Edit";
             vm.method = method;
             vm.editModeActive = true;
             vm.editMethodKey = key;
-            // console.log(method);
         }
 
         function addMethodAttribute() {

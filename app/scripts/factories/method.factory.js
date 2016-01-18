@@ -18,7 +18,6 @@
         }
 
         function updateMethod(ref, key, methodKey, val) {
-            console.log(ref, key, val)
             ref.child(key).child("methods").child(methodKey).set(val, handleReturn);
         }
 

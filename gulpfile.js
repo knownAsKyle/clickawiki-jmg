@@ -1,6 +1,8 @@
 var gulp = require("gulp");
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
+var htmlmin = require('gulp-htmlmin');
+var tap = require('gulp-tap');
 
 gulp.task("watch", watch);
 gulp.task('compress', compress);
@@ -36,8 +38,22 @@ function compress() {
         .pipe(gulp.dest('dist'));
 }
 
-function moveHtml(e) {
+function moveHtml() {
+    var count = 0;
+    var changedHtml = [];
     return gulp.src("app/scripts/directives/*.html")
-        .pipe(gulp.dest('assets/templates'));
+        .pipe(gulp.dest('assets/templates'))
+        .pipe(tap(function(file) {
+            gulp.src("app/scripts/directives/" + getExtension(file.path))
+                .pipe(htmlmin({
+                    collapseWhitespace: true
+                }))
+                .pipe(concat(getExtension(file.path) + ".min.txt"))
+                .pipe(gulp.dest('app/scripts/directives'));
+        }));
+}
 
+function getExtension(string) {
+    var index = string.lastIndexOf("\\");
+    return string.substring(index + 1);
 }
