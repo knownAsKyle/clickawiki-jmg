@@ -10,7 +10,9 @@
             login: login
         };
 
-        function getAuth() {}
+        function getAuth() {
+        	
+        }
 
         function logout(ref) {
             return ref.unauth();

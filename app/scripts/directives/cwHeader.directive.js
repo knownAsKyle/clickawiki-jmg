@@ -27,8 +27,8 @@
 			'				</div>',
 			'			</form>',
 			'			<ul class="nav navbar-nav">',
-			'				<li><a href="#" ng-click="vm.loginPrompt($event)">Log In</a></li>',
-			'				<li><a href="#">Log Out</a></li>',
+			'				<li ng-if="!vm.isLoggedIn"><a href="#" ng-click="vm.loginPrompt($event)">Log In</a></li>',
+			'				<li ng-if="vm.isLoggedIn"><a href="#" ng-click="vm.logOut($event)">Log Out</a></li>',
 			'			</ul>',
 			'		</div>',
 			'	</div>',
@@ -38,8 +38,8 @@
 			restrict: "EA",
 			transclude: true,
 		};
-		var templateUrl = null
-		//templateUrl = "cwHeader.directive.html"
+		var templateUrl = null;
+		//templateUrl = "cwHeader.directive.html";
 		if (templateUrl) {
 			directive.templateUrl = templateUrl
 		} else {

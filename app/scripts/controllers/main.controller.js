@@ -11,15 +11,19 @@
         vm.returnTypes = constants.types;
         vm.formTitleText = "New";
         vm.editModeActive = false;
+        vm.isLoggedIn = false;
         vm.allClasses = [];
         // vm.displayMethodForm = false;
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
         ref.onAuth(function(auth) {
-            console.log("checking auth: ", auth)
-            if (localStorage && auth) {
-                localStorage.setItem("cw_token", auth.token);
-            }
+            $timeout(function() {
+                console.log("checking auth: ", auth);
+                vm.isLoggedIn = auth ? true : false;
+                if (localStorage && auth) {
+                    localStorage.setItem("cw_token", auth.token);
+                }
+            });
         });
 
         if (localStorage && localStorage.getItem("cw_token")) {
@@ -51,11 +55,15 @@
 
 
         vm.loginPrompt = loginPrompt;
+        vm.logOut = logOut;
 
+        function logOut(ev) {
+            ev.preventDefault();
+            return authFactory.logout(ref);
+        }
 
 
         function loginPrompt(ev) {
-            console.log("Sadfasd")
             ev.preventDefault();
             swal(constants.loginPromptSettings, authFactory.loginPrompt);
         }
@@ -108,8 +116,7 @@
             vm.setEditClassName(false);
             vm.editModeActive = false;
             resetMethodForm();
-            angular.element(document).find(".panel-collapse").removeClass("in")
-            console.log()
+            angular.element(document).find(".panel-collapse").removeClass("in");
         }
 
         /*controller method functions*/
@@ -128,9 +135,10 @@
 
         function removeMethod(key, ev) {
             ev.stopPropagation();
-            console.log(key, vm.selectedClass)
+            console.log(key, vm.selectedClass);
             if (key) {
                 helperFactory.confirmDelete("", "", response);
+
                 function response(confirm) {
                     if (confirm) {
                         methodFactory.removeMethod(ref, vm.selectedClass.key, key);
