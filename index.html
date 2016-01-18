@@ -20,7 +20,7 @@
                             <span class="class-name">{{val.name}}</span>
                         </li>
                     </ul>
-                    <div class="panel panel-default">
+                    <div class="panel panel-default" ng-if="vm.isLoggedIn">
                         <div class="panel-heading">
                             <h3 class="panel-title">Add new class</h3>
                         </div>
@@ -50,7 +50,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="btn-group pull-right" role="group" aria-label="Class operations">
+                                    <div class="btn-group pull-right" role="group" aria-label="Class operations" ng-if="vm.isLoggedIn">
                                         <div class="dropdown">
                                             <button class="btn btn-xs btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="vm.editClass">
                                             <span class="glyphicon glyphicon-cog"></span>
@@ -126,15 +126,15 @@
                                 <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
                                 </span>
                             </div>
-                            <div class="top-buffer bottom-buffer">
+                            <div class="top-buffer" ng-if="vm.isLoggedIn">
                                 <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
                             </div>
-                            <div class="methods panel-group">
+                            <div class="methods panel-group top-buffer">
                                 <div class="method panel panel-default" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
 									<div class="panel-heading" data-toggle="collapse" data-target="#method_{{key}}_body">
 										<h4>
 											<span class="method-return-type">{{method.returnType}}</span> <span class="method-name">.{{method.name}}</span>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span> )
-											<small>
+											<small ng-if="vm.isLoggedIn">
 												<div class="btn-group pull-right" role="group" aria-label="Method operations">
 													<button type="button" class="btn btn-xs btn-default" title="Edit method" ng-click="vm.updateMethod(key,method,$event)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
 													<button type="button" class="btn btn-xs btn-default" title="Remove method" ng-click="vm.removeMethod(key,$event)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
