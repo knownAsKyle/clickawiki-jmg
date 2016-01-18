@@ -133,7 +133,7 @@
 							</div>
 							<div class="methods panel-group top-buffer">
 								<div class="method panel panel-default" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
-									<div class="panel-heading method-heading">
+									<div class="panel-heading method-heading" data-toggle="collapse" data-target="#method_{{key}}_body">
 										<h4>
 											<a data-toggle="collapse" href="#method_{{key}}_body"><span class="method-return-type">{{method.returnType}}</span> <span class="method-name">.{{method.name}}</span>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span></a> )
 											<small ng-if="vm.isLoggedIn">
