@@ -110,15 +110,13 @@
         function removeMethod(key) {
             console.log(key, vm.selectedClass)
             if (key) {
-                helperFactory.confirmDelete("", "", response)
-
+                helperFactory.confirmDelete("", "", response);
                 function response(confirm) {
                     if (confirm) {
                         methodFactory.removeMethod(ref, vm.selectedClass.key, key);
                     }
                 }
             }
-
         }
 
         function updateMethod(method) {
