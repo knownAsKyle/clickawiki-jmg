@@ -3,7 +3,7 @@
 	cwHeader.$inject = ["$compile"];
 
 	function cwHeader($compile) {
-		var template = [
+		/*var template = [
 			'<nav class="navbar navbar-default">',
 			'	<div class="container">',
 			'		<div class="navbar-header">',
@@ -33,13 +33,13 @@
 			'		</div>',
 			'	</div>',
 			'</nav>'
-		].join('');
+		].join('');*/
 		var directive = {
 			restrict: "EA",
 			transclude: true,
 		};
-		var templateUrl = null;
-		//templateUrl = "cwHeader.directive.html";
+		var templateUrl = "/dist/templates/cwHeader.directive.html";
+		
 		if (templateUrl) {
 			directive.templateUrl = templateUrl
 		} else {
