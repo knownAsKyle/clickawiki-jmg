@@ -23,10 +23,8 @@ function formatWatchGroup(list, pathConst, extension) {
 }
 
 function watch() {
-
     gulp.watch(watchGroupJS, ['compress']);
     gulp.watch("app/scripts/directives/*.html", ['moveHtml']);
-
 }
 
 function compress() {
@@ -40,6 +38,6 @@ function compress() {
 
 function moveHtml(e) {
     return gulp.src("app/scripts/directives/*.html")
-        .pipe(gulp.dest('assets/templates'))
+        .pipe(gulp.dest('assets/templates'));
 
 }
