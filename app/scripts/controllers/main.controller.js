@@ -10,6 +10,7 @@
         vm.headerTitle = constants.headerTitle;
         vm.returnTypes = constants.types;
         vm.formTitleText = "New";
+        vm.editModeActive = false;
         vm.allClasses = [];
         // vm.displayMethodForm = false;
         /*Set listener for db changes*/
@@ -105,6 +106,7 @@
             vm.selectedClass.key = key;
             vm.selectedClass.val = val;
             vm.setEditClassName(false);
+            vm.editModeActive = false;
             resetMethodForm();
             angular.element(document).find(".panel-collapse").removeClass("in")
             console.log()
@@ -112,13 +114,20 @@
 
         /*controller method functions*/
         function addNewMethod(method) {
-            methodFactory.addMethod(ref, vm.selectedClass.key, method);
-            vm.method = {};
-            vm.method.returnType = 'Return type';
+            console.log("editmode: ", vm.editModeActive)
+            if (vm.editModeActive) {
+                vm.editModeActive = false;
+                methodFactory.updateMethod(ref, vm.selectedClass.key, vm.editMethodKey, method);
+            } else {
+                methodFactory.addMethod(ref, vm.selectedClass.key, method);
+                vm.method = {};
+                vm.method.returnType = 'Return type';
+            }
             vm.displayMethodForm = false;
         }
 
-        function removeMethod(key) {
+        function removeMethod(key, ev) {
+            ev.stopPropagation();
             console.log(key, vm.selectedClass)
             if (key) {
                 helperFactory.confirmDelete("", "", response)
@@ -132,11 +141,15 @@
 
         }
 
-        function updateMethod(method) {
+        function updateMethod(key, method, ev) {
+            console.dir(method)
+            ev.stopPropagation();
             vm.displayMethodForm = true;
             vm.formTitleText = "Edit";
             vm.method = method;
-            console.log(method);
+            vm.editModeActive = true;
+            vm.editMethodKey = key;
+            // console.log(method);
         }
 
         function addMethodAttribute() {
@@ -162,6 +175,9 @@
         }
 
         function displayAddNewMethod() {
+            vm.editModeActive = false;
+            vm.formTitleText = "New";
+            resetMethodForm();
             vm.displayMethodForm = !vm.displayMethodForm;
         }
 
