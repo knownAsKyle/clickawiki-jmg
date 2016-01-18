@@ -2,41 +2,42 @@
     angular.module("clickawiki", []);
 })();
 (function() {
-	angular.module("clickawiki").constant("constants", {
-		///firebaseURL: "https://quicktest1.firebaseio.com/wiki",
-		firebaseURL: "https://apiwiki.firebaseio.com",
-		headerTitle: "Clickawiki",
-		defaultDeleteMessage: "Are you sure you want to delete this? ",
-		types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String", "Void"],
-		path: {
-			templatePath: "/assets/templates/"
-		},
-		auth: {
-			email: "admin@admin.com"
-		},
-		popUpDeleteSettings: {
-			title: "Are you sure?",
-			text: "",
-			type: "warning",
-			showCancelButton: true,
-			confirmButtonColor: "#5cb85c",
-			confirmButtonText: "Yes, delete it!",
-			cancelButtonText: "No, cancel!",
-			closeOnConfirm: false,
-			closeOnCancel: false
-		},
-		loginPromptSettings: {
-			title: "Login",
-			text: "Please provide your access code:",
-			type: "input",
-			inputType: "password",
-			showCancelButton: true,
-			closeOnConfirm: false,
-			animation: "slide-from-top",
-			inputValue: "click",
-			inputPlaceholder: "Acess code..."
-		}
-	});
+    angular.module("clickawiki").constant("constants", {
+        ///firebaseURL: "https://quicktest1.firebaseio.com/wiki",
+        useWebServer: false,
+        firebaseURL: "https://apiwiki.firebaseio.com",
+        headerTitle: "Clickawiki",
+        defaultDeleteMessage: "Are you sure you want to delete this? ",
+        types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String", "Void"],
+        path: {
+            templatePath: "/assets/templates/"
+        },
+        auth: {
+            email: "admin@admin.com"
+        },
+        popUpDeleteSettings: {
+            title: "Are you sure?",
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#5cb85c",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            closeOnConfirm: false,
+            closeOnCancel: false
+        },
+        loginPromptSettings: {
+            title: "Login",
+            text: "Please provide your access code:",
+            type: "input",
+            inputType: "password",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            animation: "slide-from-top",
+            inputValue: "click",
+            inputPlaceholder: "Acess code..."
+        }
+    });
 })();
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);
@@ -234,7 +235,6 @@
         ref.on("value", handleDataUpdate);
         ref.onAuth(function(auth) {
             $timeout(function() {
-                console.log("checking auth: ", auth);
                 vm.isLoggedIn = auth ? true : false;
                 if (localStorage && auth) {
                     localStorage.setItem("cw_token", auth.token);
@@ -287,7 +287,6 @@
         /*Action for db update*/
         function handleDataUpdate(snap) {
             $timeout(function() {
-                console.log("handleDataUpdate() ", snap.val());
                 vm.allClasses = snap.val() || {};
             });
         }
@@ -337,7 +336,6 @@
 
         /*controller method functions*/
         function addNewMethod(method) {
-            console.log("editmode: ", vm.editModeActive)
             if (vm.editModeActive) {
                 vm.editModeActive = false;
                 methodFactory.updateMethod(ref, vm.selectedClass.key, vm.editMethodKey, method);
@@ -351,10 +349,8 @@
 
         function removeMethod(key, ev) {
             ev.stopPropagation();
-            console.log(key, vm.selectedClass);
             if (key) {
                 helperFactory.confirmDelete("", "", response);
-
                 function response(confirm) {
                     if (confirm) {
                         methodFactory.removeMethod(ref, vm.selectedClass.key, key);
@@ -364,14 +360,12 @@
         }
 
         function updateMethod(key, method, ev) {
-            console.dir(method)
             ev.stopPropagation();
             vm.displayMethodForm = true;
             vm.formTitleText = "Edit";
             vm.method = method;
             vm.editModeActive = true;
             vm.editMethodKey = key;
-            // console.log(method);
         }
 
         function addMethodAttribute() {
@@ -418,55 +412,25 @@
     }
 })();
 (function() {
-	angular.module("clickawiki").directive("cwHeader", cwHeader);
-	cwHeader.$inject = ["$compile", "constants"];
+    angular.module("clickawiki").directive("cwHeader", cwHeader);
+    cwHeader.$inject = ["$compile", "constants"];
 
-	function cwHeader($compile, constants) {
-		/*var template = [
-			'<nav class="navbar navbar-default">',
-			'	<div class="container">',
-			'		<div class="navbar-header">',
-			'			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1" aria-expanded="false">',
-			'				<span class="sr-only">Toggle navigation</span>',
-			'				<span class="icon-bar"></span>',
-			'				<span class="icon-bar"></span>',
-			'				<span class="icon-bar"></span>',
-			'			</button>',
-			'           <a class="navbar-brand navbar-link" href="#">{{vm.headerTitle}}</a>',
-			'		</div>',
-			'		<div class="collapse navbar-collapse" id="navcol-1">',
-			'			<form class="navbar-form navbar-left" role="search">',
-			'				<div class="form-group">',
-			'					<div class="input-group">',
-			'						<input type="text" class="form-control" placeholder="Search" ng-model="vm.searchTerm">',
-			'						<span class="input-group-btn">',
-			'							<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true" ng-click="vm.search(vm.searchTerm)"></span></button>',
-			'						</span>',
-			'					</div>',
-			'				</div>',
-			'			</form>',
-			'			<ul class="nav navbar-nav">',
-			'				<li ng-if="!vm.isLoggedIn"><a href="#" ng-click="vm.loginPrompt($event)">Log In</a></li>',
-			'				<li ng-if="vm.isLoggedIn"><a href="#" ng-click="vm.logOut($event)">Log Out</a></li>',
-			'			</ul>',
-			'		</div>',
-			'	</div>',
-			'</nav>'
-		].join('');*/
-		var directive = {
-			restrict: "EA",
-			transclude: true,
-		};
-		var templateUrl = constants.path.templatePath + "cwHeader.directive.html";
-		
-		if (templateUrl) {
-			directive.templateUrl = templateUrl
-		} else {
-			directive.template = template;
-		}
+    function cwHeader($compile, constants) {
+        var template = '<nav class="navbar navbar-default"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1" aria-expanded="false"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand navbar-link" href="#">{{vm.headerTitle}}</a></div><div class="collapse navbar-collapse" id="navcol-1"><form class="navbar-form navbar-left" role="search"><div class="form-group"><div class="input-group"><input type="text" class="form-control" placeholder="Search" ng-model="vm.searchTerm"> <span class="input-group-btn"><button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true" ng-click="vm.search(vm.searchTerm)"></span></button></span></div></div></form><ul class="nav navbar-nav"><li ng-if="!vm.isLoggedIn"><a href="#" ng-click="vm.loginPrompt($event)">Log In</a></li><li ng-if="vm.isLoggedIn"><a href="#" ng-click="vm.logOut($event)">Log Out</a></li></ul></div></div></nav>';
+        var directive = {
+            restrict: "EA",
+            transclude: true,
+        };
+        templateUrl = constants.path.templatePath + "cwHeader.directive.html";
 
-		return directive;
-	}
+        if (constants.useWebServer) {
+            directive.templateUrl = templateUrl;
+        } else {
+            directive.template = template;
+        }
+
+        return directive;
+    }
 })();
 (function() {
 	angular.module("clickawiki").filter("methodFilter", methodFilter);

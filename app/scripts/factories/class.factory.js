@@ -25,7 +25,6 @@
         }
 
         function updateClass(ref, id, val) {
-            console.dir(val);
             ref.child(id).update(val, handleReturn);
         }
 

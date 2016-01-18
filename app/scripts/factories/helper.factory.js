@@ -18,16 +18,14 @@
             msg = msg || constants.defaultDeleteMessage;
             popup.text = msg;
             swal(popup, function(isConfirm) {
-                console.log(isConfirm, callback)
                 if (isConfirm) {
                     swal("Deleted!", "", "success");
-                    callback(true)
+                    callback(true);
                 } else {
                     swal("Cancelled", "you've stopped it!", "error");
-                    callback()
+                    callback();
                 }
             });
-
         }
     }
 })();
