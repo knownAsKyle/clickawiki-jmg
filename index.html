@@ -26,7 +26,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" ng-model="vm.newClassName" placeholder="Class name..." ng-keypress="vm.checkForEnter($event,vm.newClassName,vm.addNewClass)">
+                                <input type="text" class="form-control" placeholder="Class name..." autocomplete="off" ng-model="vm.newClassName" ng-keypress="vm.checkForEnter($event,vm.newClassName,vm.addNewClass)">
                                 <span class="input-group-btn">
                                 <button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.newClassName)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
                                 </span>
@@ -43,7 +43,7 @@
                                     <h3 class="panel-title" ng-show="!vm.editClass">Class {{vm.selectedClass.val.name}}</h3>
                                     <div class="input-group" ng-show="vm.editClass">
                                         <span class="input-group-addon" id="basic-addon3">Class </span>
-                                        <input ng-readonly="!vm.editClass" ng-model="vm.selectedClass.val.name" type="text" class="form-control" placeholder="Class Name..." ng-dblclick="vm.setEditClassName(false)" ng-change="vm.updateClass(vm.selectedClass)" ng-keypress="vm.checkForEnter($event,false,vm.setEditClassName)">
+                                        <input type="text" class="form-control" placeholder="Class name" autocomplete="off" ng-readonly="!vm.editClass" ng-model="vm.selectedClass.val.name" ng-dblclick="vm.setEditClassName(false)" ng-change="vm.updateClass(vm.selectedClass)" ng-keypress="vm.checkForEnter($event,false,vm.setEditClassName)">
                                         <span class="input-group-btn">
                                         <button type="button" class="btn btn-md btn-success" title="Save class name" ng-click="vm.setEditClassName(false)"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
                                         </span>
@@ -69,7 +69,7 @@
                             <div class="well clearfix add-edit-method" ng-show="vm.displayMethodForm">
                                 <form class="form-horizontal" role="form">
                                     <h3>{{vm.formTitleText}} method:</h3>
-                                    <input type="text" ng-model="vm.method.name" class="form-control" id="new-method-name" placeholder="Method name"/><br>
+                                    <input type="text" id="new-method-name" class="form-control" placeholder="Method name" autocomplete="off" ng-model="vm.method.name" /><br>
                                     <div class="form-group">
                                         <div class="col-sm-3 ">
                                             <select ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'" class="form-control" id="new-method-returntype">
@@ -78,7 +78,7 @@
                                             </select>
                                         </div>
                                         <div class="col-sm-9">
-                                            <input type="text" ng-model="vm.method.returnDescription" class="form-control" placeholder="Return description" />
+                                            <input type="text" class="form-control" placeholder="Return description" autocomplete="off" ng-model="vm.method.returnDescription" />
                                         </div>
                                     </div>
                                     <div class="form-group form-group-sm">
@@ -93,10 +93,10 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-sm-2">
-                                                        <input type="text" ng-model="attr.name" class="form-control" placeholder="Name" />
+                                                        <input type="text" class="form-control" placeholder="Name" autocomplete="off" ng-model="attr.name" />
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <input type="text" ng-model="attr.description" class="form-control" placeholder="Description" />
+                                                        <input type="text" class="form-control" placeholder="Description" autocomplete="off" ng-model="attr.description" />
                                                     </div>
                                                     <div class="col-sm-1">
                                                         <a ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
@@ -121,12 +121,13 @@
                                 </form>
                             </div>
                             <div class="input-group method-filter">
-                                <input ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
+                                <input type="text" class="form-control" placeholder="Filter methods..." autocomplete="off" ng-model="vm.methodSearchText">
                                 <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
                                 </span>
                             </div>
                             <div class="top-buffer" ng-if="vm.isLoggedIn">
+                                <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
                                 <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
                             </div>
                             <div class="methods panel-group top-buffer">
