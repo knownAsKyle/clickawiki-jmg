@@ -5,6 +5,9 @@
 		headerTitle: "Clickawiki",
 		defaultDeleteMessage: "Are you sure you want to delete this? ",
 		types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String", "Void"],
+		path: {
+			templatePath: "/assets/templates/"
+		},
 		auth: {
 			email: "admin@admin.com"
 		},
