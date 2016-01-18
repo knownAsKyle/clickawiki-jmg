@@ -51,9 +51,7 @@
             login: login
         };
 
-        function getAuth() {
-        	
-        }
+        function getAuth() {}
 
         function logout(ref) {
             return ref.unauth();
@@ -66,10 +64,8 @@
                 return false;
             }
             swal.close();
-            login(firebaseFactory.getRef(), null, inputValue)
-            console.log("now loging in with access code: ", inputValue);
+            login(firebaseFactory.getRef(), null, inputValue);
         }
-
 
         function login(ref, u, p, token) {
             if (!token) {
@@ -86,10 +82,8 @@
 
         function loginResponse(err, authData) {
             if (err) {
-            	swal("Login Failure", err, "error");
+                swal("Login Failure", err, "error");
                 console.log(err);
-            } else {
-                //set localstorage with session id to use auto login from then on.
             }
         }
     }
@@ -121,7 +115,6 @@
         }
 
         function updateClass(ref, id, val) {
-            console.dir(val);
             ref.child(id).update(val, handleReturn);
         }
 
@@ -173,16 +166,14 @@
             msg = msg || constants.defaultDeleteMessage;
             popup.text = msg;
             swal(popup, function(isConfirm) {
-                console.log(isConfirm, callback)
                 if (isConfirm) {
                     swal("Deleted!", "", "success");
-                    callback(true)
+                    callback(true);
                 } else {
                     swal("Cancelled", "you've stopped it!", "error");
-                    callback()
+                    callback();
                 }
             });
-
         }
     }
 })();
@@ -206,7 +197,6 @@
         }
 
         function updateMethod(ref, key, methodKey, val) {
-            console.log(ref, key, val)
             ref.child(key).child("methods").child(methodKey).set(val, handleReturn);
         }
 
