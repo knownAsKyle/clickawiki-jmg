@@ -8,6 +8,9 @@
 		headerTitle: "Clickawiki",
 		defaultDeleteMessage: "Are you sure you want to delete this? ",
 		types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String", "Void"],
+		path: {
+			templatePath: "/assets/templates/"
+		},
 		auth: {
 			email: "admin@admin.com"
 		},
@@ -416,10 +419,10 @@
 })();
 (function() {
 	angular.module("clickawiki").directive("cwHeader", cwHeader);
-	cwHeader.$inject = ["$compile"];
+	cwHeader.$inject = ["$compile", "constants"];
 
-	function cwHeader($compile) {
-		var template = [
+	function cwHeader($compile, constants) {
+		/*var template = [
 			'<nav class="navbar navbar-default">',
 			'	<div class="container">',
 			'		<div class="navbar-header">',
@@ -449,13 +452,13 @@
 			'		</div>',
 			'	</div>',
 			'</nav>'
-		].join('');
+		].join('');*/
 		var directive = {
 			restrict: "EA",
 			transclude: true,
 		};
-		var templateUrl = null;
-		//templateUrl = "cwHeader.directive.html";
+		var templateUrl = constants.path.templatePath + "cwHeader.directive.html";
+		
 		if (templateUrl) {
 			directive.templateUrl = templateUrl
 		} else {

@@ -1,8 +1,8 @@
 (function() {
 	angular.module("clickawiki").directive("cwHeader", cwHeader);
-	cwHeader.$inject = ["$compile"];
+	cwHeader.$inject = ["$compile", "constants"];
 
-	function cwHeader($compile) {
+	function cwHeader($compile, constants) {
 		/*var template = [
 			'<nav class="navbar navbar-default">',
 			'	<div class="container">',
@@ -38,7 +38,7 @@
 			restrict: "EA",
 			transclude: true,
 		};
-		var templateUrl = "/dist/templates/cwHeader.directive.html";
+		var templateUrl = constants.path.templatePath + "cwHeader.directive.html";
 		
 		if (templateUrl) {
 			directive.templateUrl = templateUrl
