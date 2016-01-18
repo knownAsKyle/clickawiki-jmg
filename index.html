@@ -128,6 +128,7 @@
                             </div>
                             <div class="top-buffer" ng-if="vm.isLoggedIn">
                                 <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+                                <button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
                             </div>
                             <div class="methods panel-group top-buffer">
                                 <div class="method panel panel-default" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
