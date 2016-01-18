@@ -17,7 +17,10 @@
             ref.child(classKey).child("methods").child(key).remove(handleReturn);
         }
 
-        function updateMethod() {}
+        function updateMethod(ref, key, methodKey, val) {
+            console.log(ref, key, val)
+            ref.child(key).child("methods").child(methodKey).set(val, handleReturn);
+        }
 
         function handleReturn(err) {
             return err ? console.log(err) : true;
