@@ -80,6 +80,12 @@ dd {
   text-align:center;
 }
 
+@media only screen and (max-width:500px) {
+	.hide-on-mobile {
+		display: none;
+	}
+}
+
 @media (min-width:768px) {
   .site-footer h5{
     text-align:left;
