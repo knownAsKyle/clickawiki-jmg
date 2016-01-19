@@ -9,6 +9,11 @@
         path: {
             templatePath: "/assets/templates/"
         },
+        sortMessage: {
+            default: "",
+            a: "ascending",
+            d: "descending"
+        },
         auth: {
             email: "admin@admin.com"
         },

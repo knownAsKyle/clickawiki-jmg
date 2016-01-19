@@ -12,6 +12,11 @@
         path: {
             templatePath: "/assets/templates/"
         },
+        sortMessage: {
+            default: "",
+            a: "ascending",
+            d: "descending"
+        },
         auth: {
             email: "admin@admin.com"
         },
@@ -153,7 +158,8 @@
     function helperFactory(constants) {
         return {
             checkForEnterPress: checkForEnterPress,
-            confirmDelete: confirmDelete
+            confirmDelete: confirmDelete,
+            sortList: sortList
         };
 
         function checkForEnterPress(evt) {
@@ -174,6 +180,42 @@
                     callback();
                 }
             });
+        }
+
+        function sortList(methods, sortType) {
+            var newOrder = [],
+                tempMethods = {};
+            angular.forEach(methods, function(v, k) {
+                var obj = v;
+                v.key = k;
+                this.push(obj);
+            }, newOrder);
+            newOrder.sort(function(a, b) {
+                var nameA = a.name.toLowerCase(),
+                    nameB = b.name.toLowerCase();
+                if (sortType === "ascending") {
+                    if (nameA < nameB) {
+                        return -1;
+                    }
+                    if (nameA > nameB)
+                        return 1;
+                    return 0;
+                } else if (sortType === "descending") {
+                    if (nameA > nameB)
+                        return -1;
+                    if (nameA < nameB)
+                        return 1;
+                    return 0;
+                } else {
+                    return 0;
+                }
+
+            });
+
+            angular.forEach(newOrder, function(v, k) {
+                tempMethods[k] = v;
+            });
+            return tempMethods;
         }
     }
 })();
@@ -219,6 +261,7 @@
         vm.formTitleText = "New";
         vm.editModeActive = false;
         vm.isLoggedIn = false;
+        vm.sortMessage = constants.sortMessage.default;
         vm.allClasses = [];
         // vm.displayMethodForm = false;
         /*Set listener for db changes*/
@@ -252,7 +295,11 @@
         //for attributes associated with methods
         vm.addMethodAttribute = addMethodAttribute;
         vm.removeMethodAttribute = removeMethodAttribute;
+        //authentication methods
+        vm.loginPrompt = loginPrompt;
+        vm.logOut = logOut;
         //extra stuff
+        vm.sortMethodList = sortMethodList;
         vm.checkForEnter = checkForEnter;
         vm.setEditClassName = setEditClassName;
         vm.displayAddNewMethod = displayAddNewMethod;
@@ -260,9 +307,7 @@
         vm.resetMethodForm = resetMethodForm;
 
 
-        vm.loginPrompt = loginPrompt;
-        vm.logOut = logOut;
-        
+        /*Handles logging in/out*/
         function logOut(ev) {
             ev.preventDefault();
             return authFactory.logout(ref);
@@ -290,7 +335,7 @@
         }
 
         function removeClass(id) {
-            helperFactory.confirmDelete("", false, response)
+            helperFactory.confirmDelete("", false, response);
 
             function response(confirm) {
                 if (confirm && id) {
@@ -341,11 +386,11 @@
             ev.stopPropagation();
             if (key) {
                 helperFactory.confirmDelete("", "", response);
+            }
 
-                function response(confirm) {
-                    if (confirm) {
-                        methodFactory.removeMethod(ref, vm.selectedClass.key, key);
-                    }
+            function response(confirm) {
+                if (confirm) {
+                    methodFactory.removeMethod(ref, vm.selectedClass.key, key);
                 }
             }
         }
@@ -401,15 +446,43 @@
             vm.displayMethodForm = false;
         }
 
-        vm.filterSecId = function(items) {
-            var result = {};
-            angular.forEach(items, function(value, key) {
-                if (!value.hasOwnProperty('name')) {
-                    result[key] = value;
-                }
-            });
-            return result;
+        //for sorting method list - ascending/descending or natural
+        function sortMethodList() {
+            var methods = vm.allClasses[vm.selectedClass.key].methods;
+            switch (vm.sortMessage) {
+                case constants.sortMessage.default:
+                    vm.sortMessage = constants.sortMessage.a;
+                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.a);
+                    break;
+                case constants.sortMessage.a:
+                    vm.sortMessage = constants.sortMessage.d;
+                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.d);
+                    break;
+                default:
+                    vm.sortMessage = constants.sortMessage.default;
+                    ref.once("value", handleDataUpdate);
+            }
         }
+    }
+})();
+(function() {
+    angular.module("clickawiki").directive("cwClassBox", cwClassBox);
+    cwClassBox.$inject = ["constants"];
+
+    function cwClassBox(constants) {
+        var template = '<h4>Classes:</h4><ul class="list-group classes"><li ng-repeat="class in vm.allClasses track by $index" ng-class="{active: vm.selectedClass.key === class.key}" class="class-selector list-group-item" ng-click="vm.selectClass(class.key,class.val)"><span class="class-name">{{class.val.name}}</span></li></ul>';
+        var directive = {
+            restict: "EA",
+            transclude: true
+        };
+
+        templateUrl = constants.path.templatePath + "cwClassBox.directive.html";
+        if (constants.useWebServer) {
+            directive.templateUrl = templateUrl;
+        } else {
+            directive.template = template;
+        }
+        return directive;
     }
 })();
 (function() {
@@ -423,13 +496,11 @@
             transclude: true,
         };
         templateUrl = constants.path.templatePath + "cwHeader.directive.html";
-
         if (constants.useWebServer) {
             directive.templateUrl = templateUrl;
         } else {
             directive.template = template;
         }
-
         return directive;
     }
 })();

@@ -5,7 +5,8 @@
     function helperFactory(constants) {
         return {
             checkForEnterPress: checkForEnterPress,
-            confirmDelete: confirmDelete
+            confirmDelete: confirmDelete,
+            sortList: sortList
         };
 
         function checkForEnterPress(evt) {
@@ -26,6 +27,42 @@
                     callback();
                 }
             });
+        }
+
+        function sortList(methods, sortType) {
+            var newOrder = [],
+                tempMethods = {};
+            angular.forEach(methods, function(v, k) {
+                var obj = v;
+                v.key = k;
+                this.push(obj);
+            }, newOrder);
+            newOrder.sort(function(a, b) {
+                var nameA = a.name.toLowerCase(),
+                    nameB = b.name.toLowerCase();
+                if (sortType === "ascending") {
+                    if (nameA < nameB) {
+                        return -1;
+                    }
+                    if (nameA > nameB)
+                        return 1;
+                    return 0;
+                } else if (sortType === "descending") {
+                    if (nameA > nameB)
+                        return -1;
+                    if (nameA < nameB)
+                        return 1;
+                    return 0;
+                } else {
+                    return 0;
+                }
+
+            });
+
+            angular.forEach(newOrder, function(v, k) {
+                tempMethods[k] = v;
+            });
+            return tempMethods;
         }
     }
 })();

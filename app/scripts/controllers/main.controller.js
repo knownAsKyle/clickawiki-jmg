@@ -12,6 +12,7 @@
         vm.formTitleText = "New";
         vm.editModeActive = false;
         vm.isLoggedIn = false;
+        vm.sortMessage = constants.sortMessage.default;
         vm.allClasses = [];
         // vm.displayMethodForm = false;
         /*Set listener for db changes*/
@@ -45,7 +46,11 @@
         //for attributes associated with methods
         vm.addMethodAttribute = addMethodAttribute;
         vm.removeMethodAttribute = removeMethodAttribute;
+        //authentication methods
+        vm.loginPrompt = loginPrompt;
+        vm.logOut = logOut;
         //extra stuff
+        vm.sortMethodList = sortMethodList;
         vm.checkForEnter = checkForEnter;
         vm.setEditClassName = setEditClassName;
         vm.displayAddNewMethod = displayAddNewMethod;
@@ -53,9 +58,7 @@
         vm.resetMethodForm = resetMethodForm;
 
 
-        vm.loginPrompt = loginPrompt;
-        vm.logOut = logOut;
-        
+        /*Handles logging in/out*/
         function logOut(ev) {
             ev.preventDefault();
             return authFactory.logout(ref);
@@ -83,7 +86,7 @@
         }
 
         function removeClass(id) {
-            helperFactory.confirmDelete("", false, response)
+            helperFactory.confirmDelete("", false, response);
 
             function response(confirm) {
                 if (confirm && id) {
@@ -134,11 +137,11 @@
             ev.stopPropagation();
             if (key) {
                 helperFactory.confirmDelete("", "", response);
+            }
 
-                function response(confirm) {
-                    if (confirm) {
-                        methodFactory.removeMethod(ref, vm.selectedClass.key, key);
-                    }
+            function response(confirm) {
+                if (confirm) {
+                    methodFactory.removeMethod(ref, vm.selectedClass.key, key);
                 }
             }
         }
@@ -194,14 +197,22 @@
             vm.displayMethodForm = false;
         }
 
-        vm.filterSecId = function(items) {
-            var result = {};
-            angular.forEach(items, function(value, key) {
-                if (!value.hasOwnProperty('name')) {
-                    result[key] = value;
-                }
-            });
-            return result;
+        //for sorting method list - ascending/descending or natural
+        function sortMethodList() {
+            var methods = vm.allClasses[vm.selectedClass.key].methods;
+            switch (vm.sortMessage) {
+                case constants.sortMessage.default:
+                    vm.sortMessage = constants.sortMessage.a;
+                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.a);
+                    break;
+                case constants.sortMessage.a:
+                    vm.sortMessage = constants.sortMessage.d;
+                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.d);
+                    break;
+                default:
+                    vm.sortMessage = constants.sortMessage.default;
+                    ref.once("value", handleDataUpdate);
+            }
         }
     }
 })();
