@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -147,8 +147,12 @@
 							</div>
 							<div class="top-buffer">
 								<button type="button" class="btn btn-success" data-toggle="modal" data-target="#add-edit-method" ng-click="vm.displayAddNewMethod()" ng-if="vm.isLoggedIn">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
-								<button type="button" class="btn btn-default" ng-click="vm.sortMethodsAsc()"><span class="hide-on-mobile">Sort ascending </span><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span></button>
-								<button type="button" class="btn btn-default" ng-click="vm.sortMethodsDesc()"><span class="hide-on-mobile">Sort descending </span><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span></button>
+								<button type="button" class="btn btn-default" ng-click="vm.sortMethodList()">
+									<span>Sort</span>
+									<span ng-if="vm.sortMessage === 'ascending'" class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
+									<span ng-if="vm.sortMessage === 'descending'" class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
+								</button>
+								<span><i>{{vm.sortMessage}}</i></span>
 							</div>
 							<div class="methods panel-group top-buffer">
 								<div class="method panel panel-default" ng-repeat="(key, method) in vm.allClasses[vm.selectedClass.key].methods track by $index" ng-if="!vm.searchTerm || (method.name.indexOf(vm.searchTerm) > -1)">

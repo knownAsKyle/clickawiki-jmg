@@ -9,13 +9,11 @@
             transclude: true,
         };
         templateUrl = constants.path.templatePath + "cwHeader.directive.html";
-
         if (constants.useWebServer) {
             directive.templateUrl = templateUrl;
         } else {
             directive.template = template;
         }
-
         return directive;
     }
 })();
