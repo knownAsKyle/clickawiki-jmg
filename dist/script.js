@@ -252,9 +252,6 @@
         //for attributes associated with methods
         vm.addMethodAttribute = addMethodAttribute;
         vm.removeMethodAttribute = removeMethodAttribute;
-        //login Methods
-        vm.loginPrompt = loginPrompt;
-        vm.logOut = logOut;
         //extra stuff
         vm.checkForEnter = checkForEnter;
         vm.setEditClassName = setEditClassName;
@@ -262,14 +259,10 @@
         vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
 
+
+        vm.loginPrompt = loginPrompt;
+        vm.logOut = logOut;
         
-
-        vm.sortMethodsAsc = sortMethodsAsc;
-
-        function sortMethodsAsc(){
-        	console.log("sorting ascending!", vm.allClasses)
-        }
-
         function logOut(ev) {
             ev.preventDefault();
             return authFactory.logout(ref);
@@ -297,7 +290,7 @@
         }
 
         function removeClass(id) {
-            helperFactory.confirmDelete("", false, response);
+            helperFactory.confirmDelete("", false, response)
 
             function response(confirm) {
                 if (confirm && id) {
@@ -348,6 +341,7 @@
             ev.stopPropagation();
             if (key) {
                 helperFactory.confirmDelete("", "", response);
+
                 function response(confirm) {
                     if (confirm) {
                         methodFactory.removeMethod(ref, vm.selectedClass.key, key);
@@ -406,26 +400,16 @@
             vm.method.attributes = [];
             vm.displayMethodForm = false;
         }
-    }
-})();
-(function() {
-    angular.module("clickawiki").directive("cwClassBox", cwClassBox);
-    cwClassBox.$inject = ["constants"];
 
-    function cwClassBox(constants) {
-        var template = '<h4>Classes:</h4><ul class="list-group classes"><li ng-repeat="class in vm.allClasses track by $index" ng-class="{active: vm.selectedClass.key === class.key}" class="class-selector list-group-item" ng-click="vm.selectClass(class.key,class.val)"><span class="class-name">{{class.val.name}}</span></li></ul>';
-        var directive = {
-            restict: "EA",
-            transclude: true
-        };
-
-        templateUrl = constants.path.templatePath + "cwClassBox.directive.html";
-        if (constants.useWebServer) {
-            directive.templateUrl = templateUrl;
-        } else {
-            directive.template = template;
+        vm.filterSecId = function(items) {
+            var result = {};
+            angular.forEach(items, function(value, key) {
+                if (!value.hasOwnProperty('name')) {
+                    result[key] = value;
+                }
+            });
+            return result;
         }
-        return directive;
     }
 })();
 (function() {
@@ -439,11 +423,13 @@
             transclude: true,
         };
         templateUrl = constants.path.templatePath + "cwHeader.directive.html";
+
         if (constants.useWebServer) {
             directive.templateUrl = templateUrl;
         } else {
             directive.template = template;
         }
+
         return directive;
     }
 })();

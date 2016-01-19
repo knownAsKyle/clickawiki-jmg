@@ -1,157 +1,170 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Clickawiki - Clickability Wiki</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" href="assets/css/sweetalert.css">
+		<link rel="stylesheet" href="assets/css/user.css">
+	</head>
+	<body ng-app="clickawiki" ng-controller="mainController as vm" >
+		<!-- <cw-header header-title="{{vm.headerTitle}}" login="vm.loginPrompt($event)"></cw-header> -->
+		<cw-header></cw-header>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clickawiki - Clickability Wiki</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/user.css">
-</head>
-
-<body ng-app="clickawiki" ng-controller="mainController as vm" >
-	<nav-bar navTitle="{{vm.navTitle}}"></nav-bar>
-	<div class="container" ng-cloak>
-		<div class="row">
-			<div class="col-md-3 left-col">
-				<h4>Classes:</h4>
-				<ul class="list-group classes">
-					<li ng-repeat="(key, val) in vm.allClasses" ng-class="{active: vm.selectedClass.key === key}" class="class-selector list-group-item" ng-click="vm.selectClass(key,val)">
-						<span class="class-name">{{val.name}}</span>
-					</li>
-				</ul>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Add new class</h3>
-					</div>
-					<div class="panel-body">
-						<div class="input-group input-group-sm">
-							<input type="text" class="form-control" ng-model="vm.newClassName" placeholder="Class name..." ng-keypress="vm.checkForEnter($event)">
-							<span class="input-group-btn">
-								<button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.newClassName)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-							</span>
+		<div class="container" ng-cloak>
+			<div class="row">
+				<div class="col-md-3 left-col">
+					<h4>Classes:</h4>
+					<ul class="list-group classes">
+						<li ng-repeat="(key, val) in vm.allClasses track by $index" ng-class="{active: vm.selectedClass.key === key}" class="class-selector list-group-item" ng-click="vm.selectClass(key,val)">
+							<span class="class-name">{{val.name}}</span>
+						</li>
+					</ul>
+					<div class="panel panel-default" ng-if="vm.isLoggedIn">
+						<div class="panel-heading">
+							<h3 class="panel-title">Add new class</h3>
+						</div>
+						<div class="panel-body">
+							<div class="input-group input-group-sm">
+								<input type="text" class="form-control" placeholder="Class name..." autocomplete="off" ng-model="vm.newClassName" ng-keypress="vm.checkForEnter($event,vm.newClassName,vm.addNewClass)">
+								<span class="input-group-btn">
+									<button class="btn btn-success add-class" type="button" ng-click="vm.addNewClass(vm.newClassName)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col-md-9 right-col">
-				<h4>Select a class on the left to view/edit its properties.</h4>
-				<div class="panel panel-primary" ng-show="vm.selectedClass">
-					<div class="panel-heading">
-						<div class="panel-title clearfix">
+				<div class="col-md-9 right-col">
+					<h4>Select a class to view/edit its properties.</h4>
+					<div class="panel panel-primary" ng-show="vm.selectedClass">
+						<div class="panel-heading clearfix">
 							<div class="row">
-								<div class="col-md-4">
-									<span class="class-name-header">
-									<small>
-										<div class="btn-group pull-left" role="group" aria-label="Method operations">
-											<h3 ng-dblclick="vm.editClass = true" ng-show="!vm.editClass">{{vm.selectedClass.val.name}}</h3>
-											<div class="input-group method-search" ng-show="vm.editClass">
-												<input ng-readonly="!vm.editClass" ng-model="vm.selectedClass.val.name" type="text" class="form-control" placeholder="Class Name..." ng-dblclick="vm.editClass = false" ng-change="vm.updateClass(vm.selectedClass)" ng-keyup="vm.editClass = !vm.checkForEnter2($event)">
-												<span class="input-group-btn">
-													<button type="button" class="btn btn-md btn-danger" title="Remove method" ng-click="vm.removeClass(vm.selectedClass.key)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-												</span>
-											</div>	
-										</div>
-									</small>
+								<div class="col-md-8 class-name-header">
+									<h3 class="panel-title" ng-show="!vm.editClass">Class {{vm.selectedClass.val.name}}</h3>
+									<div class="input-group" ng-show="vm.editClass">
+										<span class="input-group-addon" id="basic-addon3">Class </span>
+										<input type="text" class="form-control" placeholder="Class name" autocomplete="off" ng-readonly="!vm.editClass" ng-model="vm.selectedClass.val.name" ng-dblclick="vm.setEditClassName(false)" ng-change="vm.updateClass(vm.selectedClass)" ng-keypress="vm.checkForEnter($event,false,vm.setEditClassName)">
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-md btn-success" title="Save class name" ng-click="vm.setEditClassName(false)"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+										</span>
+									</div>
 								</div>
-								<div class="col-md-8">
-									<div class="btn-group pull-right" role="group" aria-label="Class operations">
-										<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+								<div class="col-md-4">
+									<div class="btn-group pull-right" role="group" aria-label="Class operations" ng-if="vm.isLoggedIn">
+										<div class="dropdown">
+											<button class="btn btn-xs btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" ng-disabled="vm.editClass">
+												<span class="glyphicon glyphicon-cog"></span>
+											</button>
+											<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+												<li><a href="#" ng-click="vm.setEditClassName(true)">Edit class name</a></li>
+												<li role="separator" class="divider"></li>
+												<li><a href="#" ng-click="vm.removeClass(vm.selectedClass.key)">Delete class {{vm.selectedClass.val.name}}</a></li>
+											</ul>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="panel-body">
-						<div class="input-group method-search">
-							<input ng-model="vm.methodSearchText" type="text" class="form-control" placeholder="Filter methods...">
-							<span class="input-group-btn">
-								<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
-							</span>
-						</div>
-						<div class="well clearfix" ng-show="vm.displayAddNewMethodFlag">
-							<form class="form-horizontal" role="form">
-								<h3>New method:</h3>
-								<input type="text" ng-model="vm.method.name" class="form-control" id="new-method-name" placeholder="Method name"/><br>
-								<div class="form-group">
-									<div class="col-sm-3 ">
-										<select ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'" class="form-control" id="new-method-returntype">
-											<option selected disabled>Return type</option>
-											<option ng-repeat="type in vm.returnTypes" value="{{type}}">{{type}}</option>
-										</select>
-									</div>
-									<div class="col-sm-9">
-										<input type="text" ng-model="vm.method.returnDescription" class="form-control" placeholder="Return description" />
-									</div>
-								</div>
-								<div class="form-group form-group-sm">
-									<div class="col-sm-12">
-										<label for="new-method-parameters">Parameters:</label>
-										<ul class="list-group" id="new-method-parameters">
-											<!-- Repeat these... -->
-											<li class="list-group-item clearfix">
-												<div class="col-sm-3 ">
-													<select class="form-control">
-														<option selected disabled>Return type</option>
-														<option ng-repeat="type in vm.returnTypes" value="{{type}}">{{type}}</option>
-													</select>
-												</div>
-												<div class="col-sm-2">
-													<input type="text" class="form-control" placeholder="Name" />
-												</div>
-												<div class="col-sm-6">
-													<input type="text" class="form-control" placeholder="Description" />
-												</div>
-												<div class="col-sm-1">
-													<a href="#"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
-												</div>
-											</li>
-											<li class="list-group-item clearfix">
-												<div class="col-sm-3 ">
-													<select class="form-control">
-														<option selected disabled>Return type</option>
-														<option ng-repeat="type in vm.returnTypes" value="{{type}}">{{type}}</option>
-													</select>
-												</div>
-												<div class="col-sm-2">
-													<input type="text" class="form-control" placeholder="Name" />
-												</div>
-												<div class="col-sm-6">
-													<input type="text" class="form-control" placeholder="Description" />
-												</div>
-												<div class="col-sm-1">
-													<a href="#"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
-												</div>
-											</li>
-											<!-- End repeater -->
-											<li class="list-group-item">
-												<a href="javascript:void(0);" ng-click="">Add parameter <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-											</li>
-										</ul>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-12">
-										<textarea ng-model="vm.newMethodBody" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
-									</div>
-								</div>
-								<button type="button" class="btn btn-success add-new-method pull-right" ng-click="vm.addNewMethod(vm.method)">Submit</button>
-							</form>
-						</div>
-						<div class="methods" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods">
-							<div class="well method">
-								<h4 class="method-name">
-									{{method.name}} - {{method.returnType}}
-									<small>
-										<div class="btn-group pull-right" role="group" aria-label="Method operations">
-											<button type="button" class="btn btn-sm btn-default" title="Edit method" ng-click="vm.editMethod(method)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
-											<button type="button" class="btn btn-sm btn-default" title="Remove method" ng-click="vm.removeMethod(method)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+						<div class="panel-body">
+							<div class="well clearfix add-edit-method" ng-show="vm.displayMethodForm">
+								<form class="form-horizontal" role="form">
+									<h3>{{vm.formTitleText}} method:</h3>
+									<input type="text" id="new-method-name" class="form-control" placeholder="Method name" autocomplete="off" ng-model="vm.method.name" /><br>
+									<div class="form-group">
+										<div class="col-sm-3 ">
+											<select ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'" class="form-control" id="new-method-returntype">
+												<option selected disabled>Return type</option>
+												<option ng-repeat="type in vm.returnTypes track by $index" value="{{type}}">{{type}}</option>
+											</select>
 										</div>
-									</small>
-								</h4>
-								<hr>
-								<div class="method-body">
-									<p>{{method.returnDescription}}</p>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" placeholder="Return description" autocomplete="off" ng-model="vm.method.returnDescription" />
+										</div>
+									</div>
+									<div class="form-group form-group-sm">
+										<div class="col-sm-12">
+											<label for="new-method-parameters">Parameters:</label>
+											<ul class="list-group" id="new-method-parameters">
+												<li class="list-group-item clearfix" ng-repeat="(key, attr) in vm.method.attributes track by $index">
+													<div class="col-sm-3 ">
+														<select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
+															<option selected disabled>Type</option>
+															<option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
+														</select>
+													</div>
+													<div class="col-sm-2">
+														<input type="text" class="form-control" placeholder="Name" autocomplete="off" ng-model="attr.name" />
+													</div>
+													<div class="col-sm-6">
+														<input type="text" class="form-control" placeholder="Description" autocomplete="off" ng-model="attr.description" />
+													</div>
+													<div class="col-sm-1">
+														<a ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
+													</div>
+												</li>
+												<li class="list-group-item">
+													<a href="javascript:void(0);" ng-click="vm.addMethodAttribute()">Add parameter <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+												</li>
+											</ul>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-12">
+											<textarea ng-model="vm.method.notes" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
+										</div>
+									</div>
+									<div class="btn-toolbar pull-right">
+										<button type="button" class="btn btn-success add-new-method" ng-click="vm.addNewMethod(vm.method)">Submit</button>
+										<!-- TODO: Clear out all the new method fields when use clicks Cancel button... kyle - make resetMethodForm()-->
+										<button type="button" class="btn btn-warning cancel-new-method" ng-click="vm.cancelMethodForm()">Cancel</button>
+									</div>
+								</form>
+							</div>
+							<div class="input-group method-filter">
+								<input type="text" class="form-control" placeholder="Filter methods..." autocomplete="off" ng-model="vm.methodSearchText">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
+								</span>
+							</div>
+							<div class="top-buffer">
+								<button type="button" class="btn btn-success" ng-click="vm.displayAddNewMethod()" ng-if="vm.isLoggedIn" ng-show="!vm.displayMethodForm">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+								<button type="button" class="btn btn-default" ng-click="vm.sortMethodsAsc()">Sort ascending <span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span></button>
+								<button type="button" class="btn btn-default" ng-click="vm.sortMethodsDesc()">Sort descending <span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span></button>
+							</div>
+							<div class="methods panel-group top-buffer">
+
+
+								<div class="method panel panel-default" ng-repeat="(key, method) in vm.allClasses[vm.selectedClass.key].methods track by $index" ng-if="!vm.searchTerm || (method.name.indexOf(vm.searchTerm) > -1)">
+									<div class="panel-heading method-heading" data-toggle="collapse" data-target="#method_{{key}}_body" ng-if="!vm.methodSearchText || (method.name.indexOf(vm.methodSearchText) > -1)">
+										<h4>
+											<a data-toggle="collapse" href="#method_{{key}}_body"><span class="method-return-type">{{method.returnType}}</span> <span class="method-name">.{{method.name}}</span>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span></a> )
+											<small ng-if="vm.isLoggedIn">
+												<div class="btn-group pull-right" role="group" aria-label="Method operations">
+													<button type="button" class="btn btn-xs btn-default" title="Edit method" ng-click="vm.updateMethod(key,method,$event)"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+													<button type="button" class="btn btn-xs btn-default" title="Remove method" ng-click="vm.removeMethod(key,$event)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+												</div>
+											</small>
+										</h4>
+									</div>
+									<div id="method_{{key}}_body" class="panel-collapse collapse">
+										<div class="method-body panel-body">
+											<dl>
+												<dt ng-if="method.attributes.length > 0">Parameters:</dt>
+												<dd class="parameter-output" ng-repeat="(key, attr) in method.attributes track by $index">
+													<span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span> - {{attr.description}}
+												</dd>
+												<dt>Returns:</dt>
+												<dd class="returns-statement">
+													<span class="method-return-type">{{method.returnType}}</span> - <span class="method-return-description">{{method.returnDescription}}</span>
+												</dd>
+												<dt ng-if="method.notes.length > 0">Notes:</dt>
+												<dd>
+													{{method.notes}}
+												</dd>
+											</dl>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -159,13 +172,12 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
-	<script src="assets/js/script.js"></script>
-	<script src="dist/script.js"></script>
-</body>
-
+		<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+		<script src="assets/js/sweetalert.min.js"></script>
+		<script src="assets/js/script.js"></script>
+		<script src="dist/script.js"></script>
+	</body>
 </html>
