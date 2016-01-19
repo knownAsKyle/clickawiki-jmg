@@ -83,9 +83,9 @@
 													<div class="col-sm-12">
 														<div class="input-group">
 															<div id="method-return-types" class="input-group-btn">
-																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Return Type <span class="caret"></span></button>
-																<ul class="dropdown-menu" ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'">
-																	<li ng-repeat="type in vm.returnTypes track by $index"><a href="#">{{type}}</a></li>
+																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{vm.method.returnType}} <span ng-if="!vm.method.returnType">Return Type</span> <span class="caret"></span></button>
+																<ul class="dropdown-menu">
+																	<li ng-repeat="type in vm.returnTypes track by $index" ng-click="vm.method.returnType = type"><a href="#">{{type}}</a></li>
 																</ul>
 															</div>
 															<input type="text" class="form-control" placeholder="What does this method return?" autocomplete="off" ng-model="vm.method.returnDescription" />
@@ -149,8 +149,8 @@
 								<button type="button" class="btn btn-success" data-toggle="modal" data-target="#add-edit-method" ng-click="vm.displayAddNewMethod()" ng-if="vm.isLoggedIn">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
 								<button type="button" class="btn btn-default" ng-click="vm.sortMethodList()">
 									<span>Sort</span>
-									<span ng-if="vm.sortMessage === 'ascending'" class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
-									<span ng-if="vm.sortMessage === 'descending'" class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
+									<span ng-show="vm.sortMessage === 'ascending'" class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
+									<span ng-show="vm.sortMessage === 'descending'" class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
 								</button>
 								<span><i>{{vm.sortMessage}}</i></span>
 							</div>
