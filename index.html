@@ -9,7 +9,6 @@
 		<link rel="stylesheet" href="assets/css/user.css">
 	</head>
 	<body ng-app="clickawiki" ng-controller="mainController as vm" >
-		<!-- <cw-header header-title="{{vm.headerTitle}}" login="vm.loginPrompt($event)"></cw-header> -->
 		<cw-header></cw-header>
 		<div class="container" ng-cloak>
 			<div class="row">
@@ -66,79 +65,6 @@
 							</div>
 						</div>
 						<div class="panel-body">
-							<div id="add-edit-method" class="modal fade add-edit-method" role="dialog" aria-labelledby="add-edit-method-title">
-								<div class="modal-dialog" role="document">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h4 id="add-edit-method-title" class="modal-title">{{vm.formTitleText}} method:</h3>
-										</div>
-										<div class="modal-body">
-											<form class="form-horizontal" role="form">
-												<div class="row">
-													<div class="col-sm-12">
-														<input type="text" id="new-method-name" class="form-control" placeholder="Method name" autocomplete="off" ng-model="vm.method.name" /><br>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-sm-12">
-														<div class="input-group">
-															<div id="method-return-types" class="input-group-btn">
-																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{vm.method.returnType}} <span ng-if="!vm.method.returnType">Return Type</span> <span class="caret"></span></button>
-																<ul class="dropdown-menu">
-																	<li ng-repeat="type in vm.returnTypes track by $index" ng-click="vm.method.returnType = type"><a href="#">{{type}}</a></li>
-																</ul>
-															</div>
-															<input type="text" class="form-control" placeholder="What does this method return?" autocomplete="off" ng-model="vm.method.returnDescription" />
-														</div>
-														<br>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-sm-12">
-														<label for="new-method-parameters">Parameters:</label>
-														<ul id="new-method-parameters" class="list-group">
-															<li class="list-group-item clearfix" ng-repeat="(key, attr) in vm.method.attributes track by $index">
-																<div class="form-inline">
-																	<div class="form-group">
-																		<select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
-																			<option selected disabled>Type</option>
-																			<option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
-																		</select>
-																	</div>
-																	<div class="form-group">
-																		<input type="text" class="form-control" placeholder="Name" autocomplete="off" ng-model="attr.name" />
-																	</div>
-																	<div class="form-group">
-																		<input type="text" class="form-control" placeholder="Description" autocomplete="off" ng-model="attr.description" />
-																	</div>
-																	<div class="form-group">
-																		<button type="button" class="btn btn-xs btn-danger pull-right" ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="hide-on-desktop">Remove parameter </span><span class="glyphicon glyphicon-remove"></span></button>
-																	</div>
-																</div>
-															</li>
-															<li class="list-group-item">
-																<a href="javascript:void(0);" ng-click="vm.addMethodAttribute()">Add parameter <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-															</li>
-														</ul>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-sm-12">
-														<textarea ng-model="vm.method.notes" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
-													</div>
-												</div>
-											</form>
-										</div>
-										<div class="modal-footer">
-											<div class="btn-toolbar pull-right">
-												<button type="button" class="btn btn-success add-new-method" data-dismiss="modal" ng-click="vm.addNewMethod(vm.method)">Submit</button>
-												<!-- TODO: Clear out all the new method fields when use clicks Cancel button... kyle - make resetMethodForm()-->
-												<button type="button" class="btn btn-default cancel-new-method" data-dismiss="modal" ng-click="vm.cancelMethodForm()">Cancel</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
 							<div class="input-group method-filter">
 								<input type="text" class="form-control" placeholder="Filter methods..." autocomplete="off" ng-model="vm.methodSearchText">
 								<span class="input-group-btn">
@@ -187,6 +113,80 @@
 									</div>
 								</div>
 							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Add/Edit Method Form: -->
+		<div id="add-edit-method" class="modal fade add-edit-method" role="dialog" aria-labelledby="add-edit-method-title">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3 id="add-edit-method-title" class="modal-title">{{vm.formTitleText}} method</h3>
+					</div>
+					<div class="modal-body">
+						<form class="form-horizontal" role="form">
+							<div class="row">
+								<div class="col-sm-12">
+									<input type="text" id="new-method-name" class="form-control" placeholder="Method name" autocomplete="off" ng-model="vm.method.name" /><br>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="input-group">
+										<div id="method-return-types" class="input-group-btn">
+											<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{vm.method.returnType}} <span ng-if="!vm.method.returnType">Return Type</span> <span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<li ng-repeat="type in vm.returnTypes track by $index" ng-click="vm.method.returnType = type"><a href="#">{{type}}</a></li>
+											</ul>
+										</div>
+										<input type="text" class="form-control" placeholder="What does this method return?" autocomplete="off" ng-model="vm.method.returnDescription" />
+									</div>
+									<br>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<label for="new-method-parameters">Parameters:</label>
+									<ul id="new-method-parameters" class="list-group">
+										<li class="list-group-item clearfix" ng-repeat="(key, attr) in vm.method.attributes track by $index">
+											<div class="form-inline">
+												<div class="form-group">
+													<select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
+														<option selected disabled>Type</option>
+														<option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<input type="text" class="form-control" placeholder="Name" autocomplete="off" ng-model="attr.name" />
+												</div>
+												<div class="form-group">
+													<input type="text" class="form-control" placeholder="Description" autocomplete="off" ng-model="attr.description" />
+												</div>
+												<div class="form-group">
+													<button type="button" class="btn btn-xs btn-danger pull-right" ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="hide-on-desktop">Remove parameter </span><span class="glyphicon glyphicon-remove"></span></button>
+												</div>
+											</div>
+										</li>
+										<li class="list-group-item">
+											<a href="javascript:void(0);" ng-click="vm.addMethodAttribute()">Add parameter <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<textarea ng-model="vm.method.notes" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<div class="btn-toolbar pull-right">
+							<button type="button" class="btn btn-success add-new-method" data-dismiss="modal" ng-click="vm.addNewMethod(vm.method)">Submit</button>
+							<!-- TODO: Clear out all the new method fields when use clicks Cancel button... kyle - make resetMethodForm()-->
+							<button type="button" class="btn btn-default cancel-new-method" data-dismiss="modal" ng-click="vm.cancelMethodForm()">Cancel</button>
 						</div>
 					</div>
 				</div>

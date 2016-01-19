@@ -2,6 +2,11 @@
 	display: none;
 }
 
+textarea {
+	resize: vertical;
+	max-height: 200px;
+}
+
 .class-selector:hover{
 	background-color: #f5f5f5;
 }
