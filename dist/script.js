@@ -262,7 +262,7 @@
 
         vm.loginPrompt = loginPrompt;
         vm.logOut = logOut;
-
+        
         function logOut(ev) {
             ev.preventDefault();
             return authFactory.logout(ref);
@@ -341,6 +341,7 @@
             ev.stopPropagation();
             if (key) {
                 helperFactory.confirmDelete("", "", response);
+
                 function response(confirm) {
                     if (confirm) {
                         methodFactory.removeMethod(ref, vm.selectedClass.key, key);
@@ -398,6 +399,16 @@
             vm.method.returnType = 'Return type';
             vm.method.attributes = [];
             vm.displayMethodForm = false;
+        }
+
+        vm.filterSecId = function(items) {
+            var result = {};
+            angular.forEach(items, function(value, key) {
+                if (!value.hasOwnProperty('name')) {
+                    result[key] = value;
+                }
+            });
+            return result;
         }
     }
 })();
