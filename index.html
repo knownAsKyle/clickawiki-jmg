@@ -75,56 +75,48 @@
 										</div>
 										<div class="modal-body">
 											<form class="form-horizontal" role="form">
-												<div class="row">
-													<input type="text" id="new-method-name" class="form-control" placeholder="Method name" autocomplete="off" ng-model="vm.method.name" /><br>
-												</div>
-												<div class="row">
-													<div class="form-group">
-														<div class="col-sm-3 ">
-															<select ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'" class="form-control" id="new-method-returntype">
-																<option selected disabled>Return type</option>
-																<option ng-repeat="type in vm.returnTypes track by $index" value="{{type}}">{{type}}</option>
-															</select>
-														</div>
-														<div class="col-sm-9">
-															<input type="text" class="form-control" placeholder="Return description" autocomplete="off" ng-model="vm.method.returnDescription" />
-														</div>
+												<input type="text" id="new-method-name" class="form-control" placeholder="Method name" autocomplete="off" ng-model="vm.method.name" /><br>
+												<div class="form-group">
+													<div class="col-sm-3 ">
+														<select ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'" class="form-control" id="new-method-returntype">
+															<option selected disabled>Return type</option>
+															<option ng-repeat="type in vm.returnTypes track by $index" value="{{type}}">{{type}}</option>
+														</select>
+													</div>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" placeholder="Return description" autocomplete="off" ng-model="vm.method.returnDescription" />
 													</div>
 												</div>
-												<div class="row">
-													<div class="form-group form-group-sm">
-														<div class="col-sm-12">
-															<label for="new-method-parameters">Parameters:</label>
-															<ul class="list-group" id="new-method-parameters">
-																<li class="list-group-item clearfix" ng-repeat="(key, attr) in vm.method.attributes track by $index">
-																	<div class="col-sm-3 ">
-																		<select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
-																			<option selected disabled>Type</option>
-																			<option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
-																		</select>
-																	</div>
-																	<div class="col-sm-2">
-																		<input type="text" class="form-control" placeholder="Name" autocomplete="off" ng-model="attr.name" />
-																	</div>
-																	<div class="col-sm-6">
-																		<input type="text" class="form-control" placeholder="Description" autocomplete="off" ng-model="attr.description" />
-																	</div>
-																	<div class="col-sm-1">
-																		<a ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
-																	</div>
-																</li>
-																<li class="list-group-item">
-																	<a href="javascript:void(0);" ng-click="vm.addMethodAttribute()">Add parameter <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-																</li>
-															</ul>
-														</div>
+												<div class="form-group form-group-sm">
+													<div class="col-sm-12">
+														<label for="new-method-parameters">Parameters:</label>
+														<ul class="list-group" id="new-method-parameters">
+															<li class="list-group-item clearfix" ng-repeat="(key, attr) in vm.method.attributes track by $index">
+																<div class="col-sm-3 ">
+																	<select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
+																		<option selected disabled>Type</option>
+																		<option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
+																	</select>
+																</div>
+																<div class="col-sm-2">
+																	<input type="text" class="form-control" placeholder="Name" autocomplete="off" ng-model="attr.name" />
+																</div>
+																<div class="col-sm-6">
+																	<input type="text" class="form-control" placeholder="Description" autocomplete="off" ng-model="attr.description" />
+																</div>
+																<div class="col-sm-1">
+																	<a ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
+																</div>
+															</li>
+															<li class="list-group-item">
+																<a href="javascript:void(0);" ng-click="vm.addMethodAttribute()">Add parameter <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+															</li>
+														</ul>
 													</div>
 												</div>
-												<div class="row">
-													<div class="form-group">
-														<div class="col-sm-12">
-															<textarea ng-model="vm.method.notes" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
-														</div>
+												<div class="form-group">
+													<div class="col-sm-12">
+														<textarea ng-model="vm.method.notes" class="new-method-body form-control" rows="4" placeholder="Notes"></textarea>
 													</div>
 												</div>
 											</form>
