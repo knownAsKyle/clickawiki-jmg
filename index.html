@@ -66,7 +66,6 @@
 							</div>
 						</div>
 						<div class="panel-body">
-							<!--<div class="well clearfix add-edit-method" ng-show="vm.displayMethodForm">-->
 							<div id="add-edit-method" class="modal fade add-edit-method" role="dialog" aria-labelledby="add-edit-method-title">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
@@ -86,7 +85,6 @@
 															<div id="method-return-types" class="input-group-btn">
 																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Return Type <span class="caret"></span></button>
 																<ul class="dropdown-menu" ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'">
-																	<!--<option selected disabled>Return type</option>-->
 																	<li ng-repeat="type in vm.returnTypes track by $index"><a href="#">{{type}}</a></li>
 																</ul>
 															</div>
@@ -98,23 +96,23 @@
 												<div class="row">
 													<div class="col-sm-12">
 														<label for="new-method-parameters">Parameters:</label>
-														<ul class="list-group" id="new-method-parameters">
+														<ul id="new-method-parameters" class="list-group">
 															<li class="list-group-item clearfix" ng-repeat="(key, attr) in vm.method.attributes track by $index">
-																<div class="row">
-																	<div class="col-sm-3 ">
+																<div class="form-inline">
+																	<div class="form-group">
 																		<select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
 																			<option selected disabled>Type</option>
 																			<option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
 																		</select>
 																	</div>
-																	<div class="col-sm-2">
+																	<div class="form-group">
 																		<input type="text" class="form-control" placeholder="Name" autocomplete="off" ng-model="attr.name" />
 																	</div>
-																	<div class="col-sm-6">
+																	<div class="form-group">
 																		<input type="text" class="form-control" placeholder="Description" autocomplete="off" ng-model="attr.description" />
 																	</div>
-																	<div class="col-sm-1">
-																		<a ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="glyphicon glyphicon-remove-circle new-method-remove-param"></span></a>
+																	<div class="form-group">
+																		<button type="button" class="btn btn-xs btn-danger pull-right" ng-click="vm.removeMethodAttribute($event,key,attr)"><span class="hide-on-desktop">Remove parameter </span><span class="glyphicon glyphicon-remove"></span></button>
 																	</div>
 																</div>
 															</li>
