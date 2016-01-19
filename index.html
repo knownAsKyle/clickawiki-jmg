@@ -11,7 +11,6 @@
 	<body ng-app="clickawiki" ng-controller="mainController as vm" >
 		<!-- <cw-header header-title="{{vm.headerTitle}}" login="vm.loginPrompt($event)"></cw-header> -->
 		<cw-header></cw-header>
-
 		<div class="container" ng-cloak>
 			<div class="row">
 				<div class="col-md-3 left-col">
@@ -133,8 +132,6 @@
 								<button type="button" class="btn btn-default" ng-click="vm.sortMethodsDesc()"><span class="hide-on-mobile">Sort descending </span><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span></button>
 							</div>
 							<div class="methods panel-group top-buffer">
-
-
 								<div class="method panel panel-default" ng-repeat="(key, method) in vm.allClasses[vm.selectedClass.key].methods track by $index" ng-if="!vm.searchTerm || (method.name.indexOf(vm.searchTerm) > -1)">
 									<div class="panel-heading method-heading" data-toggle="collapse" data-target="#method_{{key}}_body" ng-if="!vm.methodSearchText || (method.name.indexOf(vm.methodSearchText) > -1)">
 										<h4>
