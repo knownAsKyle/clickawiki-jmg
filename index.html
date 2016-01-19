@@ -10,7 +10,8 @@
 	</head>
 	<body ng-app="clickawiki" ng-controller="mainController as vm" >
 		<!-- <cw-header header-title="{{vm.headerTitle}}" login="vm.loginPrompt($event)"></cw-header> -->
-		<cw-header login="vm.loginPrompt($event)"></cw-header>
+		<cw-header></cw-header>
+
 		<div class="container" ng-cloak>
 			<div class="row">
 				<div class="col-md-3 left-col">
@@ -132,8 +133,10 @@
 								<button type="button" class="btn btn-default" ng-click="vm.sortMethodsDesc()">Sort descending <span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span></button>
 							</div>
 							<div class="methods panel-group top-buffer">
-								<div class="method panel panel-default" ng-repeat="(key,method) in vm.allClasses[vm.selectedClass.key].methods track by $index">
-									<div class="panel-heading method-heading" data-toggle="collapse" data-target="#method_{{key}}_body">
+
+
+								<div class="method panel panel-default" ng-repeat="(key, method) in vm.allClasses[vm.selectedClass.key].methods track by $index" ng-if="!vm.searchTerm || (method.name.indexOf(vm.searchTerm) > -1)">
+									<div class="panel-heading method-heading" data-toggle="collapse" data-target="#method_{{key}}_body" ng-if="!vm.methodSearchText || (method.name.indexOf(vm.methodSearchText) > -1)">
 										<h4>
 											<a data-toggle="collapse" href="#method_{{key}}_body"><span class="method-return-type">{{method.returnType}}</span> <span class="method-name">.{{method.name}}</span>(<span ng-repeat="(key,attr) in method.attributes track by $index"> <span class="parameter-type">{{attr.returnType}}</span> <span class="parameter-name">{{attr.name}}</span><span ng-show="$index !== (method.attributes.length-1)">, </span></span></a> )
 											<small ng-if="vm.isLoggedIn">
