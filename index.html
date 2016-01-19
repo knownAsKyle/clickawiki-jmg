@@ -84,10 +84,9 @@
 													<div class="col-sm-12">
 														<div class="input-group">
 															<div id="method-return-types" class="input-group-btn">
-																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Return Type <span class="caret"></span></button>
-																<ul class="dropdown-menu" ng-model="vm.method.returnType" ng-init="vm.method.returnType = 'Return type'">
-																	<!--<option selected disabled>Return type</option>-->
-																	<li ng-repeat="type in vm.returnTypes track by $index"><a href="#">{{type}}</a></li>
+																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{vm.method.returnType}} <span ng-if="!vm.method.returnType">Return Type</span> <span class="caret"></span></button>
+																<ul class="dropdown-menu">
+																	<li ng-repeat="type in vm.returnTypes track by $index" ng-click="vm.method.returnType = type"><a href="#">{{type}}</a></li>
 																</ul>
 															</div>
 															<input type="text" class="form-control" placeholder="What does this method return?" autocomplete="off" ng-model="vm.method.returnDescription" />
