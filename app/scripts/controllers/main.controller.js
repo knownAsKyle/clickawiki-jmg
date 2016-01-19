@@ -45,6 +45,9 @@
         //for attributes associated with methods
         vm.addMethodAttribute = addMethodAttribute;
         vm.removeMethodAttribute = removeMethodAttribute;
+        //login Methods
+        vm.loginPrompt = loginPrompt;
+        vm.logOut = logOut;
         //extra stuff
         vm.checkForEnter = checkForEnter;
         vm.setEditClassName = setEditClassName;
@@ -52,9 +55,13 @@
         vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
 
+        
 
-        vm.loginPrompt = loginPrompt;
-        vm.logOut = logOut;
+        vm.sortMethodsAsc = sortMethodsAsc;
+
+        function sortMethodsAsc(){
+        	console.log("sorting ascending!", vm.allClasses)
+        }
 
         function logOut(ev) {
             ev.preventDefault();
@@ -83,7 +90,7 @@
         }
 
         function removeClass(id) {
-            helperFactory.confirmDelete("", false, response)
+            helperFactory.confirmDelete("", false, response);
 
             function response(confirm) {
                 if (confirm && id) {
