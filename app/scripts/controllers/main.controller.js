@@ -125,7 +125,7 @@
             vm.displayMethodForm = false;
         }
 
-        function removeMethod(key, ev) {
+        function removeMethod(key) {
             if (key) {
                 helperFactory.confirmDelete("", "", response);
             }
@@ -137,7 +137,7 @@
             }
         }
 
-        function updateMethod(key, method, ev) {
+        function updateMethod(key, method) {
             vm.displayMethodForm = true;
             vm.formTitleText = "Edit";
             vm.method = method;
