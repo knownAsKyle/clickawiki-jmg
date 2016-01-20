@@ -154,7 +154,7 @@
 										<li class="list-group-item clearfix" ng-repeat="(key, attr) in vm.method.attributes track by $index">
 											<div class="form-inline">
 												<div class="form-group">
-													<select ng-model="attr.returnType" ng-init="attr.returnType = 'Type'" class="form-control">
+													<select ng-model="attr.returnType" ng-init="attr.returnType = attr.returnType || 'Type'" class="form-control">
 														<option selected disabled>Type</option>
 														<option ng-repeat="type in vm.returnTypes track by $index" ng-if="type !== 'Void'" value="{{type}}">{{type}}</option>
 													</select>
