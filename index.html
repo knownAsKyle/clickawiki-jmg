@@ -76,9 +76,13 @@
 									<button type="button" class="btn btn-success" data-toggle="modal" data-target="#add-edit-method" ng-click="vm.displayAddNewMethod()" ng-if="vm.isLoggedIn">Add method <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
 								</div>
 								<div class="btn-group pull-right">
+
+
 									<button type="button" class="btn btn-default" ng-click="vm.sortMethodList('')" ng-class="{active: vm.sortMessage === ''}"><span class="hide-on-mobile">Unsorted </span><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></button>
 									<button type="button" class="btn btn-default" ng-click="vm.sortMethodList('ascending')" ng-class="{active: vm.sortMessage === 'ascending'}"><span class="hide-on-mobile">Asc. </span><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span></button>
 									<button type="button" class="btn btn-default" ng-click="vm.sortMethodList('descending')" ng-class="{active: vm.sortMessage === 'descending'}"><span class="hide-on-mobile">Desc. </span><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span></button>
+
+									
 								</div>
 							</div>
 							<div class="methods panel-group top-buffer">

@@ -264,7 +264,6 @@
         vm.isLoggedIn = false;
         vm.sortMessage = constants.sortMessage.default;
         vm.allClasses = [];
-
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
         ref.onAuth(function(auth) {
@@ -275,13 +274,11 @@
                 }
             });
         });
-
         if (localStorage && localStorage.getItem("cw_token")) {
             var token = localStorage.getItem("cw_token");
             authFactory.login(ref, null, null, token);
         }
         /*template exposed functions*/
-
         //for classes
         vm.addNewClass = addNewClass;
         vm.removeClass = removeClass;
@@ -306,27 +303,25 @@
         vm.displayAddNewMethod = displayAddNewMethod;
         vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
-
-
         /*Handles logging in/out*/
         function logOut(ev) {
             ev.preventDefault();
             return authFactory.logout(ref);
         }
 
-
         function loginPrompt(ev) {
             ev.preventDefault();
             swal(constants.loginPromptSettings, authFactory.loginPrompt);
         }
-
         /*Action for db update*/
         function handleDataUpdate(snap) {
             $timeout(function() {
                 vm.allClasses = snap.val() || {};
+                if (vm.sortMessage && vm.sortMessage !== constants.sortMessage.default) {
+                    sortMethodList(vm.sortMessage);
+                }
             });
         }
-
         /*controller class functions*/
         function addNewClass(className) {
             if (className) {
@@ -351,13 +346,11 @@
                 classFactory.updateClass(ref, classObj.key, classObj.val);
             }
         }
-
         //search
         function search(searchTerm) {
             // TODO: All the hard stuff...
             console.log("Searching for '" + searchTerm + "'");
         }
-
         //handles when a class is selected
         function selectClass(key, val) {
             vm.formTitleText = "New";
@@ -369,7 +362,6 @@
             resetMethodForm();
             angular.element(document).find(".panel-collapse").removeClass("in");
         }
-
         /*controller method functions*/
         function addNewMethod(method) {
             if (vm.editModeActive) {
@@ -387,6 +379,7 @@
             if (key) {
                 helperFactory.confirmDelete("", "", response);
             }
+
             function response(confirm) {
                 if (confirm) {
                     methodFactory.removeMethod(ref, vm.selectedClass.key, key);
@@ -413,7 +406,6 @@
                 vm.method.attributes.splice(index, 1);
             }
         }
-
         /*Extra stuff*/
         //handle enter press
         function checkForEnter(evt, val, callback) {
@@ -443,25 +435,24 @@
             vm.method.attributes = [];
             vm.displayMethodForm = false;
         }
-
         //for sorting method list - ascending/descending or natural
         function sortMethodList(type) {
             var methods = vm.allClasses[vm.selectedClass.key].methods;
             switch (type) {
                 case constants.sortMessage.default:
                     vm.sortMessage = constants.sortMessage.default;
-					ref.once("value", handleDataUpdate);
+                    ref.once("value", handleDataUpdate);
                     break;
                 case constants.sortMessage.a:
                     vm.sortMessage = constants.sortMessage.a;
-					vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.a);
+                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.a);
                     break;
-				case constants.sortMessage.d:
+                case constants.sortMessage.d:
                     vm.sortMessage = constants.sortMessage.d;
-					vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.d);
+                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.d);
                     break;
                 default:
-					break;
+                    break;
             }
         }
     }
