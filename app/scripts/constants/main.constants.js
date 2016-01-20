@@ -5,7 +5,7 @@
         firebaseURL: "https://apiwiki.firebaseio.com",
         headerTitle: "Clickawiki",
         defaultDeleteMessage: "Are you sure you want to delete this? ",
-        types: ["ArrayList", "Boolean", "Integer", "Double", "Number", "Object", "String", "Void"],
+        types: ["ArrayList", "Boolean", "Character", "Double", "Integer", "Number", "Object", "String", "Void"],
         path: {
             templatePath: "/assets/templates/"
         },

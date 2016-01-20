@@ -199,20 +199,23 @@
         }
 
         //for sorting method list - ascending/descending or natural
-        function sortMethodList() {
+        function sortMethodList(type) {
             var methods = vm.allClasses[vm.selectedClass.key].methods;
-            switch (vm.sortMessage) {
+            switch (type) {
                 case constants.sortMessage.default:
-                    vm.sortMessage = constants.sortMessage.a;
-                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.a);
+                    vm.sortMessage = constants.sortMessage.default;
+					ref.once("value", handleDataUpdate);
                     break;
                 case constants.sortMessage.a:
+                    vm.sortMessage = constants.sortMessage.a;
+					vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.a);
+                    break;
+				case constants.sortMessage.d:
                     vm.sortMessage = constants.sortMessage.d;
-                    vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.d);
+					vm.allClasses[vm.selectedClass.key].methods = helperFactory.sortList(methods, constants.sortMessage.d);
                     break;
                 default:
-                    vm.sortMessage = constants.sortMessage.default;
-                    ref.once("value", handleDataUpdate);
+					break;
             }
         }
     }
