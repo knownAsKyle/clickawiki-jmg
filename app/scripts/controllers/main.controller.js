@@ -147,7 +147,8 @@
         }
 
         function updateMethod(key, method, ev) {
-            ev.stopPropagation();
+        	console.log(ev)
+            // ev.stopPropagation();
             vm.displayMethodForm = true;
             vm.formTitleText = "Edit";
             vm.method = method;

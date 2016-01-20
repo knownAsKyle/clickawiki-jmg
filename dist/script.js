@@ -397,7 +397,8 @@
         }
 
         function updateMethod(key, method, ev) {
-            ev.stopPropagation();
+        	console.log(ev)
+            // ev.stopPropagation();
             vm.displayMethodForm = true;
             vm.formTitleText = "Edit";
             vm.method = method;
@@ -464,6 +465,26 @@
                     ref.once("value", handleDataUpdate);
             }
         }
+    }
+})();
+(function() {
+    angular.module("clickawiki").directive("cwClassBox", cwClassBox);
+    cwClassBox.$inject = ["constants"];
+
+    function cwClassBox(constants) {
+        var template = '<h4>Classes:</h4><ul class="list-group classes"><li ng-repeat="class in vm.allClasses track by $index" ng-class="{active: vm.selectedClass.key === class.key}" class="class-selector list-group-item" ng-click="vm.selectClass(class.key,class.val)"><span class="class-name">{{class.val.name}}</span></li></ul>';
+        var directive = {
+            restict: "EA",
+            transclude: true
+        };
+
+        templateUrl = constants.path.templatePath + "cwClassBox.directive.html";
+        if (constants.useWebServer) {
+            directive.templateUrl = templateUrl;
+        } else {
+            directive.template = template;
+        }
+        return directive;
     }
 })();
 (function() {
