@@ -13,6 +13,7 @@
         function getAuth() {}
 
         function logout(ref) {
+            localStorage.removeItem("cw_token");
             return ref.unauth();
         }
 
@@ -36,7 +37,6 @@
             } else {
                 ref.authWithCustomToken(token, loginResponse);
             }
-
         }
 
         function loginResponse(err, authData) {

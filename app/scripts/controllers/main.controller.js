@@ -14,7 +14,7 @@
         vm.isLoggedIn = false;
         vm.sortMessage = constants.sortMessage.default;
         vm.allClasses = [];
-        // vm.displayMethodForm = false;
+
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
         ref.onAuth(function(auth) {
@@ -134,11 +134,9 @@
         }
 
         function removeMethod(key, ev) {
-            ev.stopPropagation();
             if (key) {
                 helperFactory.confirmDelete("", "", response);
             }
-
             function response(confirm) {
                 if (confirm) {
                     methodFactory.removeMethod(ref, vm.selectedClass.key, key);
@@ -147,8 +145,6 @@
         }
 
         function updateMethod(key, method, ev) {
-        	console.log(ev)
-            // ev.stopPropagation();
             vm.displayMethodForm = true;
             vm.formTitleText = "Edit";
             vm.method = method;
