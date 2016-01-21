@@ -33,6 +33,7 @@
         vm.addNewClass = addNewClass;
         vm.removeClass = removeClass;
         vm.updateClass = updateClass;
+        vm.handleClassInfo = handleClassInfo;
         vm.selectClass = selectClass;
         //search
         vm.search = search;
@@ -53,6 +54,21 @@
         vm.displayAddNewMethod = displayAddNewMethod;
         vm.cancelMethodForm = cancelMethodForm;
         vm.resetMethodForm = resetMethodForm;
+
+
+        function handleClassInfo(loggedIn){
+        	console.log(loggedIn)
+        	if(loggedIn){
+        		//show edit Class Info thing
+        	}else{
+        		//show uneditable class thing
+        	}
+
+        }
+
+
+
+
         /*Handles logging in/out*/
         function logOut(ev) {
             ev.preventDefault();
