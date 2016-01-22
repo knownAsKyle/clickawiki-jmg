@@ -1,8 +1,8 @@
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);
-    authFactory.$inject = ["firebaseFactory", "constants"];
+    authFactory.$inject = ["firebaseFactory","storageFactory", "constants"];
 
-    function authFactory(firebaseFactory, constants) {
+    function authFactory(firebaseFactory, storageFactory, constants) {
         return {
             loginPrompt: loginPrompt,
             getAuth: getAuth,
@@ -13,7 +13,7 @@
         function getAuth() {}
 
         function logout(ref) {
-            localStorage.removeItem("cw_token");
+            storageFactory.remove("cw_token");
             return ref.unauth();
         }
 

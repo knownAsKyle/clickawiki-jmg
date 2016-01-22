@@ -46,9 +46,9 @@
 })();
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);
-    authFactory.$inject = ["firebaseFactory", "constants"];
+    authFactory.$inject = ["firebaseFactory","storageFactory", "constants"];
 
-    function authFactory(firebaseFactory, constants) {
+    function authFactory(firebaseFactory, storageFactory, constants) {
         return {
             loginPrompt: loginPrompt,
             getAuth: getAuth,
@@ -59,7 +59,7 @@
         function getAuth() {}
 
         function logout(ref) {
-            localStorage.removeItem("cw_token");
+            storageFactory.remove("cw_token");
             return ref.unauth();
         }
 
@@ -249,10 +249,36 @@
     }
 })();
 (function() {
-    angular.module("clickawiki").controller("mainController", mainController);
-    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
+	angular.module("clickawiki").factory("storageFactory", storageFactory);
+	storageFactory.$inject = ["constants"];
 
-    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
+	function storageFactory() {
+		var store = localStorage || false;
+		return {
+			set: set,
+			get: get,
+			remove: remove
+		};
+
+		function set(key, val) {
+			return (store) ? store.setItem(key, val) : false;
+		}
+
+		function get(key) {
+			return (store) ? store.getItem(key) : false;
+		}
+
+		function remove(key) {
+			return (store) ? store.removeItem(key) : false;
+		}
+	}
+
+})();
+(function() {
+    angular.module("clickawiki").controller("mainController", mainController);
+    mainController.$inject = ["$timeout", "storageFactory", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
+
+    function mainController($timeout, storageFactory, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
         var vm = this;
         /*Set db reference*/
         var ref = firebaseFactory.getRef();
@@ -269,13 +295,14 @@
         ref.onAuth(function(auth) {
             $timeout(function() {
                 vm.isLoggedIn = auth ? true : false;
-                if (localStorage && auth) {
-                    localStorage.setItem("cw_token", auth.token);
+                if (auth) {
+                    storageFactory.set("cw_token", auth.token);
                 }
+
             });
         });
-        if (localStorage && localStorage.getItem("cw_token")) {
-            var token = localStorage.getItem("cw_token");
+        if (storageFactory.get("cw_token")) {
+            var token = storageFactory.get("cw_token");
             authFactory.login(ref, null, null, token);
         }
         /*template exposed functions*/
@@ -306,16 +333,15 @@
         vm.resetMethodForm = resetMethodForm;
 
 
-        function handleClassInfo(loggedIn){
-        	console.log(loggedIn)
-        	if(loggedIn){
-        		//show edit Class Info thing
-        	}else{
-        		//show uneditable class thing
-        	}
+        function handleClassInfo(loggedIn) {
+            console.log(loggedIn)
+            if (loggedIn) {
+                //show edit Class Info thing
+            } else {
+                //show uneditable class thing
+            }
 
         }
-
 
 
 
@@ -471,26 +497,6 @@
                     break;
             }
         }
-    }
-})();
-(function() {
-    angular.module("clickawiki").directive("cwClassBox", cwClassBox);
-    cwClassBox.$inject = ["constants"];
-
-    function cwClassBox(constants) {
-        var template = '<h4>Classes:</h4><ul class="list-group classes"><li ng-repeat="class in vm.allClasses track by $index" ng-class="{active: vm.selectedClass.key === class.key}" class="class-selector list-group-item" ng-click="vm.selectClass(class.key,class.val)"><span class="class-name">{{class.val.name}}</span></li></ul>';
-        var directive = {
-            restict: "EA",
-            transclude: true
-        };
-
-        templateUrl = constants.path.templatePath + "cwClassBox.directive.html";
-        if (constants.useWebServer) {
-            directive.templateUrl = templateUrl;
-        } else {
-            directive.template = template;
-        }
-        return directive;
     }
 })();
 (function() {

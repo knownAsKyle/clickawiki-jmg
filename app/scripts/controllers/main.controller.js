@@ -1,8 +1,8 @@
 (function() {
     angular.module("clickawiki").controller("mainController", mainController);
-    mainController.$inject = ["$timeout", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
+    mainController.$inject = ["$timeout", "storageFactory", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
 
-    function mainController($timeout, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
+    function mainController($timeout, storageFactory, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
         var vm = this;
         /*Set db reference*/
         var ref = firebaseFactory.getRef();
@@ -19,13 +19,14 @@
         ref.onAuth(function(auth) {
             $timeout(function() {
                 vm.isLoggedIn = auth ? true : false;
-                if (localStorage && auth) {
-                    localStorage.setItem("cw_token", auth.token);
+                if (auth) {
+                    storageFactory.set("cw_token", auth.token);
                 }
+
             });
         });
-        if (localStorage && localStorage.getItem("cw_token")) {
-            var token = localStorage.getItem("cw_token");
+        if (storageFactory.get("cw_token")) {
+            var token = storageFactory.get("cw_token");
             authFactory.login(ref, null, null, token);
         }
         /*template exposed functions*/
@@ -56,16 +57,15 @@
         vm.resetMethodForm = resetMethodForm;
 
 
-        function handleClassInfo(loggedIn){
-        	console.log(loggedIn)
-        	if(loggedIn){
-        		//show edit Class Info thing
-        	}else{
-        		//show uneditable class thing
-        	}
+        function handleClassInfo(loggedIn) {
+            console.log(loggedIn)
+            if (loggedIn) {
+                //show edit Class Info thing
+            } else {
+                //show uneditable class thing
+            }
 
         }
-
 
 
 
