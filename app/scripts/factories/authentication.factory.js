@@ -1,8 +1,8 @@
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);
-    authFactory.$inject = ["firebaseFactory","storageFactory", "constants"];
+    authFactory.$inject = ["firebaseFactory", "storageFactory", "constants", "loggerFactory"];
 
-    function authFactory(firebaseFactory, storageFactory, constants) {
+    function authFactory(firebaseFactory, storageFactory, constants, loggerFactory) {
         return {
             loginPrompt: loginPrompt,
             getAuth: getAuth,
@@ -42,7 +42,7 @@
         function loginResponse(err, authData) {
             if (err) {
                 swal("Login Failure", err, "error");
-                console.log(err);
+                loggerFactory.log(err, "warn");
             }
         }
     }

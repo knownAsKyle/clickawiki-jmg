@@ -1,8 +1,8 @@
 (function() {
     angular.module("clickawiki").controller("mainController", mainController);
-    mainController.$inject = ["$timeout", "storageFactory", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
+    mainController.$inject = ["loggerFactory","$timeout", "storageFactory", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
 
-    function mainController($timeout, storageFactory, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
+    function mainController(loggerFactory,$timeout, storageFactory, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
         var vm = this;
         /*Set db reference*/
         var ref = firebaseFactory.getRef();
@@ -14,6 +14,7 @@
         vm.isLoggedIn = false;
         vm.sortMessage = constants.sortMessage.default;
         vm.allClasses = [];
+        var logger = loggerFactory;
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
         ref.onAuth(function(auth) {
@@ -64,7 +65,6 @@
             } else {
                 //show uneditable class thing
             }
-
         }
 
 
@@ -85,6 +85,11 @@
                 vm.allClasses = snap.val() || {};
                 if (vm.sortMessage && vm.sortMessage !== constants.sortMessage.default) {
                     sortMethodList(vm.sortMessage);
+                }
+                logger.info(vm.selectedClass)
+                if (vm.selectedClass) {
+                    console.log("reseting selectedClass? ",vm.allClasses[vm.selectedClass.key].info)
+                    vm.selectedClass.info = vm.allClasses[vm.selectedClass.key].info;
                 }
             });
         }
@@ -108,8 +113,12 @@
         }
 
         function updateClass(classObj) {
+
             if (classObj && classObj.val.name.length > 0) {
-                classFactory.updateClass(ref, classObj.key, classObj.val);
+                console.log("updateClass ", classObj)
+                classFactory.updateClass(ref, classObj.key, {
+                    info: classObj.info
+                });
             }
         }
         //search
@@ -118,13 +127,17 @@
             console.log("Searching for '" + searchTerm + "'");
         }
         //handles when a class is selected
+
+
         function selectClass(key, val) {
             vm.formTitleText = "New";
             vm.selectedClass = {};
             vm.selectedClass.key = key;
             vm.selectedClass.val = val;
+            vm.selectedClass.info = val.info;
             vm.setEditClassName(false);
             vm.editModeActive = false;
+            console.log(vm.selectedClass)
             resetMethodForm();
             angular.element(document).find(".panel-collapse").removeClass("in");
         }

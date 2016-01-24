@@ -1,8 +1,8 @@
 (function() {
     angular.module("clickawiki").factory("classFactory", classFactory);
-    classFactory.$inject = [];
+    classFactory.$inject = ["loggerFactory"];
 
-    function classFactory() {
+    function classFactory(logger) {
         return {
             addClass: addClass,
             removeClass: removeClass,
@@ -29,7 +29,7 @@
         }
 
         function handleReturn(err) {
-            return err ? console.log(err) : true;
+            return err ? loggerFactory.log(err) : true;
         }
     }
 })();

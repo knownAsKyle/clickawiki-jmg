@@ -1,5 +1,56 @@
 (function() {
-    angular.module("clickawiki", []);
+    angular.module("clickawiki", ["logger"]);
+})();
+(function() {
+	if (angular) {
+		angular.module("logger", []).factory("loggerFactory", loggerFactory);
+		loggerFactory.$inject = [];
+	}
+
+	function loggerFactory() {
+		return {
+			log: log,
+			error: error,
+			warn: warn,
+			info: info,
+			dir: dir
+		};
+
+		function log(val, type) {
+			if (type) {
+				type = type.toString().charAt(0).toLowerCase();
+				switch (type) {
+					case "e":
+						return error(val);
+					case "w":
+						return warn(val);
+					case "i":
+						return info(val);
+					case "d":
+						return info(val);
+					default:
+				}
+			}
+			return console.log(val);
+		}
+
+		function error(val) {
+			return console.error(val);
+		}
+
+		function warn(val) {
+			return console.warn(val);
+		}
+
+		function info(val) {
+			return console.info(val);
+		}
+
+		function dir(val) {
+			return console.dir(val);
+		}
+
+	}
 })();
 (function() {
     angular.module("clickawiki").constant("constants", {
@@ -46,9 +97,9 @@
 })();
 (function() {
     angular.module("clickawiki").factory("authFactory", authFactory);
-    authFactory.$inject = ["firebaseFactory","storageFactory", "constants"];
+    authFactory.$inject = ["firebaseFactory", "storageFactory", "constants", "loggerFactory"];
 
-    function authFactory(firebaseFactory, storageFactory, constants) {
+    function authFactory(firebaseFactory, storageFactory, constants, loggerFactory) {
         return {
             loginPrompt: loginPrompt,
             getAuth: getAuth,
@@ -88,16 +139,16 @@
         function loginResponse(err, authData) {
             if (err) {
                 swal("Login Failure", err, "error");
-                console.log(err);
+                loggerFactory.log(err, "warn");
             }
         }
     }
 })();
 (function() {
     angular.module("clickawiki").factory("classFactory", classFactory);
-    classFactory.$inject = [];
+    classFactory.$inject = ["loggerFactory"];
 
-    function classFactory() {
+    function classFactory(logger) {
         return {
             addClass: addClass,
             removeClass: removeClass,
@@ -124,7 +175,7 @@
         }
 
         function handleReturn(err) {
-            return err ? console.log(err) : true;
+            return err ? loggerFactory.log(err) : true;
         }
     }
 })();
@@ -276,9 +327,9 @@
 })();
 (function() {
     angular.module("clickawiki").controller("mainController", mainController);
-    mainController.$inject = ["$timeout", "storageFactory", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
+    mainController.$inject = ["loggerFactory","$timeout", "storageFactory", "constants", "firebaseFactory", "classFactory", "methodFactory", "helperFactory", "authFactory"];
 
-    function mainController($timeout, storageFactory, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
+    function mainController(loggerFactory,$timeout, storageFactory, constants, firebaseFactory, classFactory, methodFactory, helperFactory, authFactory) {
         var vm = this;
         /*Set db reference*/
         var ref = firebaseFactory.getRef();
@@ -290,6 +341,7 @@
         vm.isLoggedIn = false;
         vm.sortMessage = constants.sortMessage.default;
         vm.allClasses = [];
+        var logger = loggerFactory;
         /*Set listener for db changes*/
         ref.on("value", handleDataUpdate);
         ref.onAuth(function(auth) {
@@ -340,7 +392,6 @@
             } else {
                 //show uneditable class thing
             }
-
         }
 
 
@@ -361,6 +412,11 @@
                 vm.allClasses = snap.val() || {};
                 if (vm.sortMessage && vm.sortMessage !== constants.sortMessage.default) {
                     sortMethodList(vm.sortMessage);
+                }
+                logger.info(vm.selectedClass)
+                if (vm.selectedClass) {
+                    console.log("reseting selectedClass? ",vm.allClasses[vm.selectedClass.key].info)
+                    vm.selectedClass.info = vm.allClasses[vm.selectedClass.key].info;
                 }
             });
         }
@@ -384,8 +440,12 @@
         }
 
         function updateClass(classObj) {
+
             if (classObj && classObj.val.name.length > 0) {
-                classFactory.updateClass(ref, classObj.key, classObj.val);
+                console.log("updateClass ", classObj)
+                classFactory.updateClass(ref, classObj.key, {
+                    info: classObj.info
+                });
             }
         }
         //search
@@ -394,13 +454,17 @@
             console.log("Searching for '" + searchTerm + "'");
         }
         //handles when a class is selected
+
+
         function selectClass(key, val) {
             vm.formTitleText = "New";
             vm.selectedClass = {};
             vm.selectedClass.key = key;
             vm.selectedClass.val = val;
+            vm.selectedClass.info = val.info;
             vm.setEditClassName(false);
             vm.editModeActive = false;
+            console.log(vm.selectedClass)
             resetMethodForm();
             angular.element(document).find(".panel-collapse").removeClass("in");
         }
